@@ -1,0 +1,22 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Start a New Trip!</title>
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAzyl6IGlGGmnVCqHiAluta6VfjuGf6Fec&libraries=places"></script>
+  </head>
+  <body>
+    <div> Create new trip </div>
+    <form method=["GET"] action='/new_trip'>
+    Location: <input type="text" name="location" id="autocomplete">
+    <script src="https://code.jquery.com/jquery.js"></script>
+    <script src="/static/js/location.js" type="text/javascript"></script>
+    
+
+  <!--   <form action="/new_trip"> -->
+    
+        <input type="submit" id="submit_location">
+    </form>
+
+
+  </body>
+</html> 
