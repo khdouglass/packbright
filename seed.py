@@ -23,10 +23,10 @@ def load_trips():
 
     print "Trips"
 
-    trips = ['khdouglass', 'khdouglass']
+    trips = [('khdouglass', 'California vacation'), ('khdouglass', 'Winter trip to NYC')]
 
     for trip in trips:
-        new_trip = Trip(user_id=trip)
+        new_trip = Trip(user_id=trip[0], trip_name=trip[1])
         db.session.add(new_trip)
 
     db.session.commit()
@@ -74,7 +74,7 @@ def load_location_visits():
 def load_weather():
     """Load weather data into database."""
 
-    weather = [('clear', 72, 58), ('chanceflurries', 40, 32), ('rain', 55, 43)]
+    weather = [('Clear', 72, 58), ('Chance Flurries', 40, 32), ('Rain', 55, 43)]
 
     for item in weather:
         new_weather = Weather(weather_summary_id=item[0], temperature_high=item[1], 
@@ -89,8 +89,15 @@ def load_weather_summary():
 
     # need to select icon color and size, save in img file.
     # https://github.com/manifestinteractive/weather-underground-icons/tree/master/dist/icons
-    images = [('chanceflurries', '/static/img/chanceflurries.png'), ('clear', '/static/img/clear.png'), 
-              ('rain', '/static/img/rain.png')]
+    images = [('Chance Flurries', '/static/img/chanceflurries.png'), ('Clear', '/static/img/clear.png'), 
+              ('Rain', '/static/img/rain.png'), ('Chance Rain', '/static/img/chancerain.png'), 
+              ('Chance Sleet', '/static/img/chancesleet.png'), ('Chance Snow', '/static/img/chancesnow.png'),
+              ('Chance Tstorms', '/static/img/chancetstorms.png'), ('Cloudy', '/static/img/cloudy.png'),
+              ('Flurries', '/static/img/flurries.png'), ('Fog', '/static/img/fog.png'), ('Hazy', '/static/img/hazy.png'),
+              ('Mostly Cloudy', '/static/img/mostlycloudy.png'), ('Mostly Sunny', '/static/img/mostlysunny.png'),
+              ('Partly Cloudy', '/static/img/partlycloudy.png'), ('Partly Sunny', '/static/img/partlysunny.png'),
+              ('Sleet', '/static/img/sleet.png'), 'Snow', '/static/img/snow.png', ('Sunny', '/static/img/sunny.png'),
+              ('Tstorms', '/static/img/tstorms.png'), ('Unknown', '/static/img/unknown.png')]
 
     for image in images:
         new_image = WeatherSummary(weather_summary_id=image[0], icon_url=image[1])

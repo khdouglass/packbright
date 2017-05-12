@@ -1,11 +1,40 @@
 <!doctype html>
 <html>
   <head>
-    <title>Start a New Trip!</title>
+    <title>PACK MANAGER</title>
   </head>
   <body>
-    <div id="new_location"> </div> 
-    {{ location }}
+
+    <h1>{{ trip_name }}</h1>
+
+    <div> WEATHER </div>
+    <div> {% for item in weather %}
+          Day: {{ item[0] }}
+          Summary: {{ item[1] }}
+          Temp High: {{ item[2] }}
+          Temp Low: {{ item[3] }}
+          <img src="{{ item[4] }}">
+          {% endfor %}
+    </div>
+
+    <script src='/static/js/location.js' type='text/javascript'></script>
+
+
+    <h2> Let's create your packing list!<h2>
+    <h4> Complete this survey for your visit to 
+      {{ location[0] }}, {{ location[1] }}.
+    </h4>
+
+    <form>
+      How many outfits will you need? <input type='number' name='outfits'>
+      Will you need formal clothing? 
+      <input type='radio' name='formal' value='yes'>Yes
+      <input type='radio' name='formal' value='no'>No
+
+
+
+    </form>
+
 
   </body>
 </html> 
