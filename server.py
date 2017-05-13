@@ -74,6 +74,12 @@ def user_landing():
 
     return render_template('user_landing.html')
 
+@app.route('/core_list')
+def core_list():
+    """Create user core packling list."""
+
+    pass
+
 
 @app.route('/new_trip')
 def new_trip():
@@ -139,7 +145,6 @@ def create_list():
 
     # add items to packing list.
     # suggested items displayed separately or in line with the option to "add".
-
     # option to add another location to your trip or see complete list.
 
     return render_template('create_list.html')
@@ -151,6 +156,7 @@ def complete_list():
 
     # include core items.
     # option of viewing items by location or by category.
+
     pass
 
 
@@ -159,6 +165,7 @@ def past_trips():
     """Display user's past trips."""
 
     # list of past trips information.
+    
     pass
 
 
