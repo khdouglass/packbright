@@ -90,14 +90,14 @@ def load_weather_summary():
     # need to select icon color and size, save in img file.
     # https://github.com/manifestinteractive/weather-underground-icons/tree/master/dist/icons
     images = [('Chance Flurries', '/static/img/chanceflurries.png'), ('Clear', '/static/img/clear.png'), 
-              ('Rain', '/static/img/rain.png'), ('Chance Rain', '/static/img/chancerain.png'), 
-              ('Chance Sleet', '/static/img/chancesleet.png'), ('Chance Snow', '/static/img/chancesnow.png'),
-              ('Chance Tstorms', '/static/img/chancetstorms.png'), ('Cloudy', '/static/img/cloudy.png'),
+              ('Rain', '/static/img/rain.png'), ('Chance of Rain', '/static/img/chancerain.png'), 
+              ('Chance of Sleet', '/static/img/chancesleet.png'), ('Chance of Snow', '/static/img/chancesnow.png'),
+              ('Chance of a Thunderstorm', '/static/img/chancetstorms.png'), ('Cloudy', '/static/img/cloudy.png'),
               ('Flurries', '/static/img/flurries.png'), ('Fog', '/static/img/fog.png'), ('Hazy', '/static/img/hazy.png'),
               ('Mostly Cloudy', '/static/img/mostlycloudy.png'), ('Mostly Sunny', '/static/img/mostlysunny.png'),
               ('Partly Cloudy', '/static/img/partlycloudy.png'), ('Partly Sunny', '/static/img/partlysunny.png'),
               ('Sleet', '/static/img/sleet.png'), 'Snow', '/static/img/snow.png', ('Sunny', '/static/img/sunny.png'),
-              ('Tstorms', '/static/img/tstorms.png'), ('Unknown', '/static/img/unknown.png')]
+              ('Tstorms', '/static/img/tstorms.png'), ('Unknown', '/static/img/unknown.png'), ('Overcast', '/static/img/cloudy.png')]
 
     for image in images:
         new_image = WeatherSummary(weather_summary_id=image[0], icon_url=image[1])

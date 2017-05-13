@@ -108,7 +108,7 @@ class WeatherSummary(db.Model):
 
     __tablename__ = "weather_summaries"
 
-    weather_summary_id = db.Column(db.String(20), primary_key=True)
+    weather_summary_id = db.Column(db.String(30), primary_key=True)
     icon_url = db.Column(db.String(150), nullable=False)
 
     def __repr__(self):

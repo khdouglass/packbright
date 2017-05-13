@@ -69,9 +69,6 @@ def logout():
 def user_landing():
     """Display user landing page."""
 
-    # create new trip -- enter trip name and (first) location.
-    # user google map api for location search.
-    # key = AIzaSyAzyl6IGlGGmnVCqHiAluta6VfjuGf6Fec
     # see/edit core list.
     # link to view past trips.
 
@@ -82,12 +79,19 @@ def user_landing():
 def new_trip():
     """Create new trip."""
 
+    session['user_id'] = 'khdouglass'
+
+    # get location and trip name from user entry
     location = request.args.get('location')
     trip_name = request.args.get('trip_name').title()
    
-    new_location = Location(location_name=location)
-    db.session.add(new_location)
+    # add location to database if not already in db
+    db_location = db.session.query(Location).filter_by(location_name=location).first()
+    if db_location == None:
+        new_location = Location(location_name=location)
+        db.session.add(new_location)
 
+    # add trip to db
     new_trip = Trip(user_id='khdouglass', trip_name=trip_name)
     db.session.add(new_trip)
     
@@ -95,16 +99,16 @@ def new_trip():
 
     # session["location"] = location
 
+    # format location to get weather information from wunderground api
+    location = location.split(',')
+    location_city = location[0].replace(" ", "_")
+
     if "United States" in location:
-        location_city = location[:-19]
-        location_state = location[-17:-15]
-        url = 'http://api.wunderground.com/api/3e18519d13a0ee9d/forecast/q/{}/{}.json'.format(location_state, location_city.replace(" ", "_"))
+        location_state = location[1][1:]
+        url = 'http://api.wunderground.com/api/3e18519d13a0ee9d/forecast/q/{}/{}.json'.format(location_state, location_city)
     else:
-        location = location.split(',')
-        location_city = location[0]
-        location_country = location[1][1:]
-        print location_country
-        url = 'http://api.wunderground.com/api/3e18519d13a0ee9d/forecast/q/{}/{}.json'.format(location_country.replace(" ", "_"), location_city)
+        location_country = location[1][1:].replace(" ", "_")
+        url = 'http://api.wunderground.com/api/3e18519d13a0ee9d/forecast/q/{}/{}.json'.format(location_country, location_city)
 
     f = urllib2.urlopen(url)
     json_string = f.read()
@@ -113,20 +117,20 @@ def new_trip():
     weather = []
 
     for i in range(3):
-        day = parsed_json['forecast']['simpleforecast']['forecastday'][i]['date']['weekday']         
-        summary = parsed_json['forecast']['simpleforecast']['forecastday'][i]['conditions'] 
-        temp_high = parsed_json['forecast']['simpleforecast']['forecastday'][i]['high']['fahrenheit']
-        temp_low = parsed_json['forecast']['simpleforecast']['forecastday'][i]['low']['fahrenheit']
-        print "this is the summary", summary
+        forecast_info = parsed_json['forecast']['simpleforecast']['forecastday'][i]
+        day = forecast_info['date']['weekday']         
+        summary = forecast_info['conditions'] 
+        temp_high = forecast_info['high']['fahrenheit']
+        temp_low = forecast_info['low']['fahrenheit']
         weather_icon = db.session.query(WeatherSummary.icon_url).filter_by(weather_summary_id=summary).one()
-        print weather_icon[0]
         weather.append((day, summary, temp_high, temp_low, weather_icon[0]))
-
-
 
     f.close()
 
-    return render_template('new_trip.html', location=location, trip_name=trip_name, weather=weather)
+    occassions = ['Business', 'Party', 'Relaxing', 'Tourism', 'Camping']
+
+    return render_template('new_trip.html', location=location, trip_name=trip_name, 
+                                            weather=weather, occassions=occassions)
 
 
 @app.route('/create_list')
@@ -138,7 +142,7 @@ def create_list():
 
     # option to add another location to your trip or see complete list.
 
-    pass
+    return render_template('create_list.html')
 
 
 @app.route('/complete_list')
