@@ -93,7 +93,7 @@ class Weather(db.Model):
     __tablename__ = "weather"
 
     weather_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    weather_summary_id = db.Column(db.String(20), db.ForeignKey('weather_summaries.weather_summary_id'))
+    weather_summary_id = db.Column(db.String(200), db.ForeignKey('weather_summaries.weather_summary_id'))
     temperature_high = db.Column(db.Integer, nullable=False)
     temperature_low = db.Column(db.Integer, nullable=False)
 

@@ -3,6 +3,7 @@
 from jinja2 import StrictUndefined
 import urllib2
 import json
+from random import choice
 
 from flask import Flask, render_template, request, flash, redirect, session
 from flask_debugtoolbar import DebugToolbarExtension
@@ -89,7 +90,7 @@ def new_trip():
 
     # get location and trip name from user entry
     location = request.args.get('location')
-    trip_name = request.args.get('trip_name').title()
+    trip_name = request.args.get('trip_name')
    
     # add location to database if not already in db
     db_location = db.session.query(Location).filter_by(location_name=location).first()
@@ -101,9 +102,6 @@ def new_trip():
     new_trip = Trip(user_id='khdouglass', trip_name=trip_name)
     db.session.add(new_trip)
     
-    db.session.commit()
-
-    # session["location"] = location
 
     # format location to get weather information from wunderground api
     location = location.split(',')
@@ -121,6 +119,8 @@ def new_trip():
     parsed_json = json.loads(json_string)
 
     weather = []
+    weather_high_avg = 0
+    weather_low_avg = 0
 
     for i in range(3):
         forecast_info = parsed_json['forecast']['simpleforecast']['forecastday'][i]
@@ -130,8 +130,20 @@ def new_trip():
         temp_low = forecast_info['low']['fahrenheit']
         weather_icon = db.session.query(WeatherSummary.icon_url).filter_by(weather_summary_id=summary).one()
         weather.append((day, summary, temp_high, temp_low, weather_icon[0]))
+        weather_high_avg += int(temp_high)
+        weather_low_avg += int(temp_low)
 
     f.close()
+
+    new_weather = Weather(weather_summary_id=weather[2][1], temperature_high=(weather_high_avg / 3), 
+                              temperature_low=(weather_low_avg / 3))
+    db.session.add(new_weather)
+    db.session.commit()
+
+    new_visit = LocationVisit(trip_id=new_trip.trip_id, weather_id=new_weather.weather_id, location_id=new_location.location_id, private=True)
+    db.session.add(new_visit)
+
+    db.session.commit()
 
     occassions = ['Business', 'Party', 'Relaxing', 'Tourism', 'Camping']
 
@@ -165,7 +177,7 @@ def past_trips():
     """Display user's past trips."""
 
     # list of past trips information.
-    
+
     pass
 
 
