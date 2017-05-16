@@ -2,8 +2,85 @@
 <html>
   <head>
     <title>PACK MANAGER</title>
+    <style>
+        .weather {
+            display: inline-block; 
+        }
+    </style>
   </head>
   <body>
-    Create a list.
+    <h1>Create a list.</h1>
+
+    {% for item in session['weather_list'] %}
+    <div class='weather'><img src='{{ item[4] }}'></div>
+    {{ item[0] }}
+    {{ item[1] }}
+    {{ item[2] }}°/{{ item[3] }}°
+    {% endfor %}<h1> Suggested Packing List </h1>
+    - You'll need {{ num_outfits }} outfits.
+    
+    <div> {% if formal == 'yes' %}
+    - Don't forget a formal outfit!
+    {% endif %} </div>
+    
+    {{ purpose }}
+
+    <div> {% if passport %}
+    - Passport!
+    {% endif %} </div>
+
+    <div>{% if sunglasses %}
+    - Sunglasses!
+    {% endif %} </div>
+
+    <div>{% if jacket %}
+    - Jacket!
+    {% endif %} </div>
+
+    <div>{% if umbrella %}
+    - Umbrella!
+    {% endif %} </div>
+
+    <h1> Your Packing List </h1>
+
+    <form action='create_list' method='POST'>
+        Item Category: 
+        <select id='category'>
+            {% for category in categories %}
+            <option value='{{ category[0] }}'>{{ category[0] }}</option>
+            {% endfor %}
+        </select>
+        Item Description: <input type='text' id='description'>
+        <input type="Submit" value='Add Item'>
+    </form>
+   <!--  <form action>
+        Add another location: <input type='text' name='another_location'>
+    </form> -->
+    <script src="https://code.jquery.com/jquery.js"></script>
+    
+    <script> 
+    function alertItem(result) {
+        alert(result);  
+    }
+
+    function addItem(evt) {
+        evt.preventDefault();
+
+        var formInputs = {
+            "category": $('#category').val(),
+            "description": $('#description').val()
+        };
+
+        $.post("/create_list", formInputs, alertItem)
+    }
+
+    $('#new-item').on('submit', addItem);
+
+
+
+    </script>
+
+
+
   </body>
 </html>

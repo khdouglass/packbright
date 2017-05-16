@@ -14,7 +14,7 @@
     <h1>{{ trip_name }}</h1>
     
 
-    {% for item in weather %}
+    {% for item in weather_list %}
     <div class='weather'><img src='{{ item[4] }}'></div>
     {{ item[0] }}
     {{ item[1] }}
@@ -28,8 +28,8 @@
       {{ location[0] }}, {{ location[1] }}.
     </h4>
 
-    <form action='/create_list'>
-      How many total outfits will you need? <input type='number' name='total_outfits'>
+    <form action='/create_list' method=['GET']>
+      How many total outfits will you need? <input type='number' name='num_outfits'>
       <div> Reasons for visiting {{ location[0] }}: 
         {% for occassion in occassions %}
         <input type='checkbox' name='purpose' value='{{ occassion }}'>{{ occassion }}

@@ -96,8 +96,8 @@ def load_weather_summary():
               ('Flurries', '/static/img/flurries.png'), ('Fog', '/static/img/fog.png'), ('Hazy', '/static/img/hazy.png'),
               ('Mostly Cloudy', '/static/img/mostlycloudy.png'), ('Mostly Sunny', '/static/img/mostlysunny.png'),
               ('Partly Cloudy', '/static/img/partlycloudy.png'), ('Partly Sunny', '/static/img/partlysunny.png'),
-              ('Sleet', '/static/img/sleet.png'), 'Snow', '/static/img/snow.png', ('Sunny', '/static/img/sunny.png'),
-              ('Tstorms', '/static/img/tstorms.png'), ('Unknown', '/static/img/unknown.png'), ('Overcast', '/static/img/cloudy.png')]
+              ('Sleet', '/static/img/sleet.png'), ('Snow', '/static/img/snow.png'), ('Sunny', '/static/img/sunny.png'),
+              ('Thunderstorms', '/static/img/tstorms.png'), ('Unknown', '/static/img/unknown.png'), ('Overcast', '/static/img/cloudy.png')]
 
     for image in images:
         new_image = WeatherSummary(weather_summary_id=image[0], icon_url=image[1])
@@ -190,8 +190,7 @@ if __name__ == "__main__":
     load_core_list()
     load_core_list_items()
     load_images()
-    load_categories()
-    
+
     
 
 
