@@ -43,14 +43,14 @@
 
     <h1> Your Packing List </h1>
 
-    <form action='create_list' method='POST'>
+    <form action='/create_list' method='POST'>
         Item Category: 
-        <select id='category'>
+        <select id='item_category' name='category'>
             {% for category in categories %}
             <option value='{{ category[0] }}'>{{ category[0] }}</option>
             {% endfor %}
         </select>
-        Item Description: <input type='text' id='description'>
+        Item Description: <input type='text' id='item_description' name='description'>
         <input type="Submit" value='Add Item'>
     </form>
    <!--  <form action>
@@ -58,23 +58,23 @@
     </form> -->
     <script src="https://code.jquery.com/jquery.js"></script>
     
-    <script> 
-    function alertItem(result) {
-        alert(result);  
-    }
+     <script> 
+    // function alertItem(result) {
+    //     alert(result);  
+    // }
 
-    function addItem(evt) {
-        evt.preventDefault();
+    // function addItem(evt) {
+    //     evt.preventDefault();
 
-        var formInputs = {
-            "category": $('#category').val(),
-            "description": $('#description').val()
-        };
+    //     var formInputs = {
+    //         "category": $('#item_category').val(),
+    //         "description": $('#item_description').val()
+    //     };
 
-        $.post("/create_list", formInputs, alertItem)
-    }
+    //     $.post("/create_list", formInputs, alertItem)
+    // }
 
-    $('#new-item').on('submit', addItem);
+    // $('#new-item').on('submit', addItem);
 
 
 

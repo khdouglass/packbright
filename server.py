@@ -204,20 +204,17 @@ def add_item():
     item_category = request.form.get('category')
     item_description = request.form.get('description')
 
-    print item_category
-    print item_description
+    category_id = db.session.query(Category.category_id).filter_by(category_name=item_category).one()
 
-    # new_item = db.session.query(Item).filter_by(category_id=item_category, description=item_description).first()
-    # if new_item is None:
-    new_item = Item(category_id=item_category, description=item_description)
-    db.session.add(new_item)
-    # else:
-    #     new_item = new_item
+    new_item = db.session.query(Item).filter_by(category_id=category_id, description=item_description).first()
+
+    if new_item is None:
+        new_item = Item(category_id=category_id, description=item_description)
+        db.session.add(new_item)
 
     db.session.commit()
 
-    print new_item
-    return "Item added"
+    return redirect('/create_list')
 
 
 @app.route('/complete_list')
