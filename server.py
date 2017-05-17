@@ -89,7 +89,16 @@ def new_trip():
 
     # get location and trip name from user entry
     location = request.args.get('location')
-    trip_name = request.args.get('trip_name')
+    
+    # if trip name already in session, keep it
+    if 'trip_name' in session:
+        trip_name = session['trip_name']
+        new_trip = db.session.query(Trip).filter_by(trip_name=trip_name, user_id='khdouglass').one()
+    else:
+        # if not, get name from html and add to db
+        trip_name = request.args.get('trip_name')
+        new_trip = Trip(user_id='khdouglass', trip_name=trip_name)
+        db.session.add(new_trip)
    
     # add location to database if not already in db
     db_location = db.session.query(Location).filter_by(location_name=location).first()
@@ -98,10 +107,6 @@ def new_trip():
         db.session.add(new_location)
     else:
         new_location = db_location
-
-    # add trip to db
-    new_trip = Trip(user_id='khdouglass', trip_name=trip_name)
-    db.session.add(new_trip)
 
     # format location to get weather information from wunderground api
     location = location.split(',')
@@ -137,11 +142,6 @@ def new_trip():
 
     f.close()
 
-    # add information to session
-    session['user_id'] = 'khdouglass'
-    session['location'] = location
-    session['weather_list'] = weather_list
-
     # add weather details to DB
     new_weather = Weather(weather_summary_id=weather_list[2][1], temperature_high=(weather_high_avg / 3), 
                               temperature_low=(weather_low_avg / 3))
@@ -153,6 +153,13 @@ def new_trip():
     db.session.add(new_visit)
 
     db.session.commit()
+
+    # add information to session
+    session['user_id'] = 'khdouglass'
+    session['location'] = location
+    session['weather_list'] = weather_list
+    session['trip_name'] = trip_name
+    session['location_visit_id'] = new_visit.location_visit_id
 
     # occassions for html
     occassions = ['Business', 'Party', 'Relaxing', 'Tourism', 'Camping']
@@ -166,7 +173,6 @@ def create_list():
     """Create packing list for specified location."""
 
     # add items to packing list.
-    # suggested items displayed separately or in line with the option to "add".
     # option to add another location to your trip or see complete list.
 
     # get info from html
@@ -177,6 +183,7 @@ def create_list():
     # get info from session
     weather_list = session['weather_list']
     location = session['location']
+    trip_name = session['trip_name']
 
     # create new suggeted list instance
     new_list = SuggestedList(num_outfits, location, weather_list)
@@ -194,37 +201,57 @@ def create_list():
                                                purpose=purpose, formal=formal,
                                                passport=passport, sunglasses=sunglasses,
                                                jacket=jacket, umbrella=umbrella,
-                                               categories=categories)
+                                               categories=categories, trip_name=trip_name)
 
 
 @app.route('/create_list', methods=['POST'])
 def add_item():
     """Add item to list for location visit to database."""
 
+    # get user input from html
     item_category = request.form.get('category')
     item_description = request.form.get('description')
 
+    # query db for id associated with item_category
     category_id = db.session.query(Category.category_id).filter_by(category_name=item_category).one()
 
+    # query db for item matching category and description from user
     new_item = db.session.query(Item).filter_by(category_id=category_id, description=item_description).first()
 
+    # create new item if not in db
     if new_item is None:
         new_item = Item(category_id=category_id, description=item_description)
         db.session.add(new_item)
+        db.session.commit()
+
+    # get location id from session
+    location_visit_id = session['location_visit_id']
+
+    #create new location_visit_items instance
+    new_location_visit_item = LocationVisitItem(location_visit_id=location_visit_id, item_id=new_item.item_id)
+    db.session.add(new_location_visit_item)
 
     db.session.commit()
 
-    return redirect('/create_list')
+    return "Item added"
 
 
-@app.route('/complete_list')
+@app.route('/packing_list')
 def complete_list():
     """Display complete packing list for trip."""
 
     # include core items.
     # option of viewing items by location or by category.
+    
+    # retrieve trip from session
+    trip = session['trip_name']
 
-    pass
+    # query db for trip items
+    trip_locations = db.session.query(LocationVisit.location_visit_id).join(Trip).filter_by(trip_name=trip).all()
+    items = db.session.query(Item.description, Location.location_name, Category.category_name).join(LocationVisitItem, LocationVisit, Category, Location).filter(LocationVisit.location_visit_id.in_(trip_locations)).all()
+
+
+    return render_template('packing_list.html', items=items)
 
 
 @app.route('/past_trips')

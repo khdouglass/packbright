@@ -1,0 +1,23 @@
+<!doctype html>
+<html>
+  <head>
+    <title>PACK MANAGER</title>
+  </head>
+  <body>
+    <table style="width:50%">
+        <tr>
+            <th>Category</th>
+            <th>Item</th>
+            <th>Location</th>
+        </tr>
+        {% for item in items %}
+        <tr>
+            <th>{{ item[2] }}</th>
+            <th>{{ item[0] }}</th>
+            <th>{{ item[1] }}</th>
+        </tr>
+        {% endfor %}
+    </table>    
+
+  </body>
+</html> 

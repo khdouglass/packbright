@@ -23,3 +23,8 @@ class SuggestedList(object):
         for item in self.weather_list:
             if item[1] in ['Rain', 'Thunderstorms', 'Sleet', 'Chance of Rain']:
                 return True
+
+
+
+
+

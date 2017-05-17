@@ -2,6 +2,7 @@
 <html>
   <head>
     <title>PACK MANAGER</title>
+    <script type='text/javascript' src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAzyl6IGlGGmnVCqHiAluta6VfjuGf6Fec&libraries=places"></script>
     <style>
         .weather {
             display: inline-block; 
@@ -9,7 +10,7 @@
     </style>
   </head>
   <body>
-    <h1>Create a list.</h1>
+    <h1>{{ trip_name }}</h1>
 
     {% for item in session['weather_list'] %}
     <div class='weather'><img src='{{ item[4] }}'></div>
@@ -41,45 +42,55 @@
     - Umbrella!
     {% endif %} </div>
 
-    <h1> Your Packing List </h1>
+    <h1> Add items to you list </h1>
 
-    <form action='/create_list' method='POST'>
+    <form id='new-item' method='POST'>
         Item Category: 
-        <select id='item_category' name='category'>
+        <select id='item-category' name='category'>
+            <option value="" disabled selected>Choose One</option>
             {% for category in categories %}
             <option value='{{ category[0] }}'>{{ category[0] }}</option>
             {% endfor %}
         </select>
-        Item Description: <input type='text' id='item_description' name='description'>
+        Item Description: <input type='text' id='item-description' name='description'>
         <input type="Submit" value='Add Item'>
     </form>
-   <!--  <form action>
-        Add another location: <input type='text' name='another_location'>
-    </form> -->
-    <script src="https://code.jquery.com/jquery.js"></script>
-    
-     <script> 
-    // function alertItem(result) {
-    //     alert(result);  
-    // }
 
-    // function addItem(evt) {
-    //     evt.preventDefault();
+    <h3 id='item-list'> Your List: </h3>
 
-    //     var formInputs = {
-    //         "category": $('#item_category').val(),
-    //         "description": $('#item_description').val()
-    //     };
+    <form method=['POST'] action='/new_trip'>
+    <div>
+    Add another location to your trip: <input type='text' name='location' id='autocomplete'>
+    <input type='submit' id='submit_location' value='Go!'>
+    </div>
+    </form>
 
-    //     $.post("/create_list", formInputs, alertItem)
-    // }
-
-    // $('#new-item').on('submit', addItem);
+    <form action='/packing_list'>
+        Done packing for your {{ trip_name }} trip? <input type='submit' id='submit_location' value='See my list!'>
+    </form>
 
 
+    <script src='https://code.jquery.com/jquery.js'></script>
+    <script src='/static/js/location.js' type='text/javascript'></script>
+    <script> 
+
+    function addItem(evt) {
+        evt.preventDefault();
+
+        var formInputs = {
+            "category": $('#item-category').val(),
+            "description": $('#item-description').val()
+        };
+
+        $.post("/create_list", formInputs);
+        $("#item-list").after('<p>['+formInputs['category']+'] '+formInputs['description']+'</p>');
+        $("#item-description").val("");
+
+    }
+
+    $('#new-item').on('submit', addItem);
 
     </script>
-
 
 
   </body>

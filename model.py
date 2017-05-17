@@ -30,7 +30,7 @@ class Trip(db.Model):
     __tablename__ = "trips"
 
     trip_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    trip_name = db.Column(db.String(200), nullable=False)
+    trip_name = db.Column(db.String(200), nullable=False, unique=True)
     user_id = db.Column(db.String(20),db.ForeignKey('users.user_id'))
 
     def __repr__(self):
