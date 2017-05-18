@@ -1,15 +1,15 @@
-<!doctype html>
-<html>
-  <head>
-    <title>PACK MANAGER</title>
+{% extends 'base.html' %}
+
+{% block title %}PACK MANAGER{% endblock %}
+
+{% block content %}
     <script type='text/javascript' src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAzyl6IGlGGmnVCqHiAluta6VfjuGf6Fec&libraries=places"></script>
     <style>
         .weather {
             display: inline-block; 
         }
     </style>
-  </head>
-  <body>
+
     <h1>{{ trip_name }}</h1>
 
     {% for item in session['weather_list'] %}
@@ -65,7 +65,7 @@
     </div>
     </form>
 
-    <form action='/packing_list'>
+    <form action='/packing_list/{{trip_name}}'>
         Done packing for your {{ trip_name }} trip? <input type='submit' id='submit_location' value='See my list!'>
     </form>
 
@@ -93,5 +93,4 @@
     </script>
 
 
-  </body>
-</html>
+{% endblock %}

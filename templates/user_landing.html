@@ -1,10 +1,11 @@
-<!doctype html>
-<html>
-  <head>
-    <title>Start a New Trip!</title>
+{% extends 'base.html' %}
+
+{% block title %}PACK MANAGER{% endblock %}
+
+{% block content %}
+
     <script type='text/javascript' src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAzyl6IGlGGmnVCqHiAluta6VfjuGf6Fec&libraries=places"></script>
-  </head>
-  <body>
+
     <div> Create new trip </div>
     <form method=['POST'] action='/new_trip'>
     <div>Trip Name: <input type='text' name='trip_name'></div>
@@ -18,5 +19,13 @@
     </div>
     </form>
 
-  </body>
-</html> 
+    <form action='/core_list'>
+        <input type='submit' id='core-list' value='Your Core List'>
+    </form>
+
+    <h1>Past Trips</h1>
+        {% for trip in trips %}
+        <a href='/packing_list/{{ trip[0] }}'>{{ trip[0] }}</a>
+        {% endfor %}
+
+{% endblock %}

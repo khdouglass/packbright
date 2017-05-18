@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block title %}PACK MANAGER{% endblock %}
+
+{% block content %}
+    <table style='width:40%' id='packing-list' class='tablesorter'>
+    <h1>Core Packing List</h1>
+    <thead>
+    <tr>
+        <th>Category</th>
+        <th>Item</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for item in core_list %}
+    <tr>
+        <th>{{ item[1] }}</th>
+        <th>{{ item[0] }}</th>
+    </tr>
+    </tbody>
+    {% endfor %}
+    </table>    
+
+    <script>
+    
+    $(document).ready(function() { 
+        $("#packing-list").tablesorter(); 
+    } 
+    ); 
+
+    </script>
+{% endblock %}

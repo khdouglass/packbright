@@ -1,23 +1,62 @@
-<!doctype html>
-<html>
-  <head>
-    <title>PACK MANAGER</title>
-  </head>
-  <body>
-    <table style="width:50%">
-        <tr>
-            <th>Category</th>
-            <th>Item</th>
-            <th>Location</th>
-        </tr>
+{% extends 'base.html' %}
+
+{% block title %}PACK MANAGER{% endblock %}
+
+{% block content %}
+    <style>
+        .weather {
+            display: inline-block; 
+        }
+    </style>
+
+    <h1>{{ trip_name }}</h1>
+
+    {% for item in location_weather_list %}
+
+    <div class='weather'><img src='{{ item[2] }}'>
+    {{ item[0] }}°/{{ item[1] }}°
+    {{ item[3] }}
+    </div>
+    {% endfor %}
+
+
+    <table id='packing-list' class='tablesorter' style="width:50%" >
+        <thead>
+            <tr>
+                <th>Category</th>
+                <th>Item</th>
+                <th>Location</th>
+            </tr>
+        </thead>
+        <tbody>
         {% for item in items %}
-        <tr>
-            <th>{{ item[2] }}</th>
-            <th>{{ item[0] }}</th>
-            <th>{{ item[1] }}</th>
-        </tr>
+            <tr>
+                <th>{{ item[2] }}</th>
+                <th>{{ item[0] }}</th>
+                <th>{{ item[1] }}</th>
+            </tr>
         {% endfor %}
+
+        {% for item in core_list %}
+            <tr>
+                <th>{{ item[1] }}</th>
+                <th>{{ item[0] }}</th>
+                <th>Core Packing List<th>
+            </tr>
+        {% endfor %}
+        </tbody>  
     </table>    
 
-  </body>
-</html> 
+    <form action='/reset_trip'>
+        <input type='submit' value='Start a new trip!'>
+    </form>
+
+    <script>
+
+    $(function(){
+      $("#packing-list").tablesorter();
+    });
+
+    </script>
+
+{% endblock %}

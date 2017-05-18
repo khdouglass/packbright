@@ -24,7 +24,6 @@ app.secret_key = "ABC"
 app.jinja_env.undefined = StrictUndefined
 
 
-
 @app.route('/')
 def index():
     """Homepage."""
@@ -73,14 +72,65 @@ def user_landing():
 
     # see/edit core list.
     # link to view past trips.
+    trips = db.session.query(Trip.trip_name).filter_by(user_id='khdouglass').all()
 
-    return render_template('user_landing.html')
+    return render_template('user_landing.html', trips=trips)
 
 @app.route('/core_list')
 def core_list():
     """Create user core packling list."""
 
-    pass
+    # query db for user's core list
+    core_list_id = db.session.query(CoreList.core_list_id).filter_by(user_id='khdouglass').one()
+
+    # create user's core list in db
+    if core_list_id is not None:
+        core_list = db.session.query(Item.description, Category.category_name).join(CoreListItem, CoreList, Category).filter(CoreList.user_id=='khdouglass').all()
+
+        return render_template('core_list.html', core_list=core_list)
+    else:
+        trip_name = session['trip_name']
+
+        # get categories from DB
+        categories = db.session.query(Category.category_name).order_by(Category.category_name).all()
+
+        return render_template('create_core_list.html', categories=categories, trip_name=trip_name)
+
+
+@app.route('/create_core_list', methods=['POST'])
+def process_core_list():
+    """Add items to user's core packing list."""
+
+        
+    # else:
+    #     core_list_id = CoreList(user_id='khdouglass')
+    #     db.session.add(core_list_id)
+    #     db.session.commit()
+
+
+    # get user input from html
+    item_category = request.form.get('category')
+    item_description = request.form.get('description')
+
+    # query db for id associated with item_category
+    category_id = db.session.query(Category.category_id).filter_by(category_name=item_category).one()
+
+    # query db for item matching category and description from user
+    new_item = db.session.query(Item).filter_by(category_id=category_id, description=item_description).first()
+
+    # create new item if not in db
+    if new_item is None:
+        new_item = Item(category_id=category_id, description=item_description)
+        db.session.add(new_item)
+        db.session.commit()
+
+    #create new core_list_items instance
+    core_list_item = CoreListItem(core_list_id=core_list_id, item_id=new_item.item_id)
+    db.session.add(core_list_item)
+
+    db.session.commit()
+
+    return "Item added"
 
 
 @app.route('/new_trip')
@@ -172,9 +222,6 @@ def new_trip():
 def create_list():
     """Create packing list for specified location."""
 
-    # add items to packing list.
-    # option to add another location to your trip or see complete list.
-
     # get info from html
     num_outfits = request.args.get('num_outfits')
     purpose = request.args.get('purpose')
@@ -236,32 +283,34 @@ def add_item():
     return "Item added"
 
 
-@app.route('/packing_list')
-def complete_list():
+@app.route('/packing_list/<trip_name>', methods=['GET'])
+def complete_list(trip_name):
     """Display complete packing list for trip."""
-
-    # include core items.
-    # option of viewing items by location or by category.
     
     # retrieve trip from session
-    trip = session['trip_name']
+    if 'trip_name' in session:
+        trip_name = session['trip_name']
+
+    trip_id = db.session.query(Trip.trip_id).filter_by(trip_name=trip_name).one()
+
+    # query db for location weather
+    location_weather_list = db.session.query(Weather.temperature_high, Weather.temperature_low, WeatherSummary.icon_url, Location.location_name).join(WeatherSummary, LocationVisit, Location).filter(LocationVisit.trip_id==trip_id).all()
 
     # query db for trip items
-    trip_locations = db.session.query(LocationVisit.location_visit_id).join(Trip).filter_by(trip_name=trip).all()
+    trip_locations = db.session.query(LocationVisit.location_visit_id).join(Trip).filter_by(trip_name=trip_name).all()
     items = db.session.query(Item.description, Location.location_name, Category.category_name).join(LocationVisitItem, LocationVisit, Category, Location).filter(LocationVisit.location_visit_id.in_(trip_locations)).all()
+    core_list = db.session.query(Item.description, Category.category_name).join(CoreListItem, CoreList, Category).filter(CoreList.user_id=='khdouglass').all()
+
+    return render_template('packing_list.html', items=items, trip_name=trip_name, core_list=core_list, location_weather_list=location_weather_list)
 
 
-    return render_template('packing_list.html', items=items)
+@app.route('/reset_trip')
+def reset_trip():
+    """Reset session to create new trip."""
 
+    del session['trip_name']
 
-@app.route('/past_trips')
-def past_trips():
-    """Display user's past trips."""
-
-    # list of past trips information.
-
-    pass
-
+    return redirect('/user_landing')
 
 
 if __name__ == "__main__":
