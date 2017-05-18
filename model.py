@@ -129,7 +129,7 @@ class LocationVisitItem(db.Model):
     def __repr__(self):
         """Provide helpful representation when printed."""
 
-        return "<Location Visit Item location_visit_item_id=%s location_visit_id=%s item_id=%s>" % (self.location_visit_item_id, 
+        return "<Location Visit Item location_visit_items_id=%s location_visit_id=%s item_id=%s>" % (self.location_visit_items_id, 
                                                                                          self.location_visit_id, 
                                                                                          self.item_id)
 

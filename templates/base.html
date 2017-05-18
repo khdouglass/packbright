@@ -1,22 +1,31 @@
 <!doctype html>
 <html>
 <head>
+    <style>
+        li {
+            display: inline;
+        }
+    </style>
+
     <title>PACK APP NAME</title>
+
     <script> console.log("hi")</script>
     <script src='https://code.jquery.com/jquery.js'></script>
     <script type="text/javascript" src="https://mottie.github.io/tablesorter/dist/js/jquery.tablesorter.min.js">
     </script>
+
 </head>
+
 <body>
-
-
-{% if "user_id" in session %}
-    <a href="/logout">Logout</a>
-{% else %}
-    <a href="/login">Login</a>
-{% endif %}
-
-<hr>
+<ul>
+    {% if "user_id" in session %}
+    <li><a href="/logout">Logout</a></li>
+    <li><a href="/user_landing/{{ session['user_id'] }}">Home</a></li>
+    <li><a href="/core_list">Core List</a></li>
+    {% else %}
+    <li><a href="/login">Login</a></li>
+    {% endif %}
+</ul>
 
 {% for flash in get_flashed_messages() %}
   {{ flash }}

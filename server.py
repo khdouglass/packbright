@@ -28,73 +28,106 @@ app.jinja_env.undefined = StrictUndefined
 def index():
     """Homepage."""
 
-    #sign in option
-    #register option
 
-    pass
+    return render_template('homepage.html')
 
-@app.route('/register', methods=['GET'])
+
+@app.route('/register')
 def register_form():
     """Show form for user signup."""
 
-    # show form to register new user.
 
-    pass
+    return render_template('register.html')
 
 
 @app.route('/register', methods=['POST'])
 def register_process():
     """Process registration."""
 
-    # process new user registration.
+    # get user information from registration form
+    user_id = request.form.get('username')
+    first_name = request.form.get('first_name')
+    last_name = request.form.get('last_name')
+    email = request.form.get('email')
+    password = request.form.get('password')
 
-    pass
+    # create new user, add to db
+    new_user = User(user_id=user_id, first_name=first_name, last_name=last_name, 
+                    email=email, password=password)
+    
+    db.session.add(new_user)
+    db.session.commit()
+
+    # set user_id in session
+    session['user_id'] = user_id
+
+    return redirect('/user_landing/' + user_id)    
+    
 
 @app.route('/login', methods=['POST'])
 def login():
     """Process login."""
 
-    # process user login.
+    # get user input
+    user_id = request.form.get('username')
+    password = request.form.get('password')
 
-    pass
+    # query db for user_id
+    user = db.session.query(User).filter_by(user_id=user_id).first()
+
+    # flash message and redirect if username or password is incorrect
+    if user is None:
+        flash("User does not exist!")
+        return redirect('/')
+
+    if user.password != password:
+        flash("Password is incorrect!")
+        return redirect('/')
+
+    # set session to user_id
+    session['user_id'] = user_id
+
+    return redirect('user_landing/' + user_id)
+
 
 @app.route('/logout')
 def logout():
     """Process logout."""
 
-    # process user logout.
+    del session['user_id']
 
-    pass
+    return redirect('/')
 
-@app.route('/user_landing', methods=['GET'])
-def user_landing():
+
+@app.route('/user_landing/<user_id>', methods=['GET'])
+def user_landing(user_id):
     """Display user landing page."""
 
-    # see/edit core list.
-    # link to view past trips.
-    trips = db.session.query(Trip.trip_name).filter_by(user_id='khdouglass').all()
+    # query db for user's trips to display
+    trips = db.session.query(Trip.trip_name).filter_by(user_id=user_id).all()
 
     return render_template('user_landing.html', trips=trips)
+
 
 @app.route('/core_list')
 def core_list():
     """Create user core packling list."""
 
+    user_id = session['user_id'] 
+
     # query db for user's core list
-    core_list_id = db.session.query(CoreList.core_list_id).filter_by(user_id='khdouglass').one()
+    core_list_id = db.session.query(CoreList.core_list_id).filter_by(user_id='user_id').first()
 
     # create user's core list in db
     if core_list_id is not None:
-        core_list = db.session.query(Item.description, Category.category_name).join(CoreListItem, CoreList, Category).filter(CoreList.user_id=='khdouglass').all()
+        core_list = db.session.query(Item.description, Category.category_name).join(CoreListItem, CoreList, Category).filter(CoreList.user_id=='user_id').all()
 
         return render_template('core_list.html', core_list=core_list)
     else:
-        trip_name = session['trip_name']
-
         # get categories from DB
         categories = db.session.query(Category.category_name).order_by(Category.category_name).all()
 
-        return render_template('create_core_list.html', categories=categories, trip_name=trip_name)
+        return render_template('create_core_list.html', categories=categories)
 
 
 @app.route('/create_core_list', methods=['POST'])
@@ -103,7 +136,7 @@ def process_core_list():
 
         
     # else:
-    #     core_list_id = CoreList(user_id='khdouglass')
+    #     core_list_id = CoreList(user_id='user_id')
     #     db.session.add(core_list_id)
     #     db.session.commit()
 
@@ -137,17 +170,19 @@ def process_core_list():
 def new_trip():
     """Create new trip."""
 
+    user_id = session['user_id']
+
     # get location and trip name from user entry
     location = request.args.get('location')
     
     # if trip name already in session, keep it
     if 'trip_name' in session:
         trip_name = session['trip_name']
-        new_trip = db.session.query(Trip).filter_by(trip_name=trip_name, user_id='khdouglass').one()
+        new_trip = db.session.query(Trip).filter_by(trip_name=trip_name, user_id=user_id).one()
     else:
         # if not, get name from html and add to db
         trip_name = request.args.get('trip_name')
-        new_trip = Trip(user_id='khdouglass', trip_name=trip_name)
+        new_trip = Trip(user_id=user_id, trip_name=trip_name)
         db.session.add(new_trip)
    
     # add location to database if not already in db
@@ -205,7 +240,6 @@ def new_trip():
     db.session.commit()
 
     # add information to session
-    session['user_id'] = 'khdouglass'
     session['location'] = location
     session['weather_list'] = weather_list
     session['trip_name'] = trip_name
@@ -280,16 +314,33 @@ def add_item():
 
     db.session.commit()
 
-    return "Item added"
+    #get item_id and return it
+    item_id = new_location_visit_item.location_visit_items_id
+
+    return jsonify(item_id)
+
+
+@app.route('/remove_item')
+def remove_item():
+    """Remove item from location visit list."""
+
+    item_id = request.args.get('item_id')
+    
+    # get item from db
+    item = db.session.query(LocationVisitItem).filter_by(item_id=item_id).one()
+
+    # delete item from location_visit_items table
+    db.session.delete(item)
+    db.session.commit()
+
+    return "Item deleted"
 
 
 @app.route('/packing_list/<trip_name>', methods=['GET'])
 def complete_list(trip_name):
     """Display complete packing list for trip."""
     
-    # retrieve trip from session
-    if 'trip_name' in session:
-        trip_name = session['trip_name']
+    user_id = session['user_id']
 
     trip_id = db.session.query(Trip.trip_id).filter_by(trip_name=trip_name).one()
 
@@ -298,8 +349,8 @@ def complete_list(trip_name):
 
     # query db for trip items
     trip_locations = db.session.query(LocationVisit.location_visit_id).join(Trip).filter_by(trip_name=trip_name).all()
-    items = db.session.query(Item.description, Location.location_name, Category.category_name).join(LocationVisitItem, LocationVisit, Category, Location).filter(LocationVisit.location_visit_id.in_(trip_locations)).all()
-    core_list = db.session.query(Item.description, Category.category_name).join(CoreListItem, CoreList, Category).filter(CoreList.user_id=='khdouglass').all()
+    items = db.session.query(Item.description, Item.item_id, Location.location_name, Category.category_name).join(LocationVisitItem, LocationVisit, Category, Location).filter(LocationVisit.location_visit_id.in_(trip_locations)).all()
+    core_list = db.session.query(Item.description, Category.category_name).join(CoreListItem, CoreList, Category).filter(CoreList.user_id==user_id).all()
 
     return render_template('packing_list.html', items=items, trip_name=trip_name, core_list=core_list, location_weather_list=location_weather_list)
 
@@ -308,9 +359,12 @@ def complete_list(trip_name):
 def reset_trip():
     """Reset session to create new trip."""
 
-    del session['trip_name']
+    user_id = session['user_id']
 
-    return redirect('/user_landing')
+    if 'trip_name' in session:
+        del session['trip_name']
+
+    return redirect('user_landing/' + user_id)
 
 
 if __name__ == "__main__":

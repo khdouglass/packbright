@@ -6,17 +6,21 @@
 
     <script type='text/javascript' src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAzyl6IGlGGmnVCqHiAluta6VfjuGf6Fec&libraries=places"></script>
 
-    <div> Create new trip </div>
-    <form method=['POST'] action='/new_trip'>
-    <div>Trip Name: <input type='text' name='trip_name'></div>
+    <div>Create new trip</div>
+        <form method=['POST'] action='/new_trip'>
+
+    <label>Trip Name: 
+        <input type='text' name='trip_name'>
+    </label>
     
-    <div>
-    Location: <input type='text' name='location' id='autocomplete'>
-    <script src='https://code.jquery.com/jquery.js'></script>
-    <script src='/static/js/location.js' type='text/javascript'></script>
+    <label>Location: 
+        <input type='text' name='location' id='autocomplete'>
+    </label>
+
+        <script src='https://code.jquery.com/jquery.js'></script>
+        <script src='/static/js/location.js' type='text/javascript'></script>
     
-    <input type='submit' id='submit_location'>
-    </div>
+        <input type='submit' id='submit_location'>
     </form>
 
     <form action='/core_list'>

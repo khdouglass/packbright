@@ -19,7 +19,6 @@
     </div>
     {% endfor %}
 
-
     <table id='packing-list' class='tablesorter' style="width:50%" >
         <thead>
             <tr>
@@ -30,10 +29,11 @@
         </thead>
         <tbody>
         {% for item in items %}
-            <tr>
-                <th>{{ item[2] }}</th>
+            <tr id='{{ item[1] }}'>
+                <th>{{ item[3] }}</th>
                 <th>{{ item[0] }}</th>
-                <th>{{ item[1] }}</th>
+                <th>{{ item[2] }}</th>
+                <th><div class='remove'>X</div></th>
             </tr>
         {% endfor %}
 
@@ -53,9 +53,16 @@
 
     <script>
 
-    $(function(){
-      $("#packing-list").tablesorter();
-    });
+        $(".remove").on('click', function () {
+            var id = $(this).closest('tr').attr("id");        
+            $.get('/remove_item', {item_id: id});    
+            $(this).closest("tr").remove();
+            console.log(id);
+        });
+
+        $(function(){
+          $("#packing-list").tablesorter();
+        });
 
     </script>
 

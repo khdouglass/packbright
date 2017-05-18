@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}PACK MANAGER{% endblock %}
+
+{% block content %}
+
+    <h1>THE PACK MANAGER </h1>
+
+    <h4>Create a Pack Manager account!</h4>
+    <form action='/register' method='POST'>
+        <div>
+            <label>Username:
+                <input type='text' name='username' required>
+            </label>
+        </div>
+        <div>
+            <label>First Name:
+                <input type='text' name='first_name' required>
+            </label>
+        </div>
+        <div>
+            <label>Last Name:
+                <input type='text' name='last_name' required>
+            </label>
+        </div>
+        <div>
+            <label>Email:
+                <input type='email' name='email' required>
+            </label>
+        </div>
+        <div>
+            <label>Password:
+                <input type='password' name='password' required>
+            </label>
+        </div>
+        <div>
+            <input type='submit' value='Register'>
+        </div>
+    </form>
+
+{% endblock %}

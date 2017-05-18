@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block title %}PACK MANAGER{% endblock %}
+
+{% block content %}
+
+    <h1>THE PACK MANAGER </h1>
+
+    <h4>Start packing for your next trip!</h4>
+    <form action='/login' method='POST'>
+        <div>
+            <label>Username:
+                <input type='text' name='username' required>
+            </label>
+        </div>
+        <div>
+            <label>Password:
+                <input type='password' name='password' required>
+            </label>
+        </div>
+        <div>
+            <input type='submit' value='Log In'>
+        </div>
+    </form>
+
+    <form action='/register'>
+        <div>
+            <label>Not a member? Sign up!
+                <input type='submit' value='Sign Up'>
+            </label> 
+        </div>
+    </form>
+
+{% endblock %}
