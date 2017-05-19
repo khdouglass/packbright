@@ -56,7 +56,17 @@
         <input type="Submit" value='Add Item'>
     </form>
 
-    <h3 id='item-list'> Your List: </h3>
+    <!-- <p id='item-list'> Your List: </p> -->
+    <table id='packing-list' class='tablesorter' style="width:50%" >
+        <thead>
+            <tr>
+                <th>Category</th>
+                <th>Item</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>  
+    </table> 
 
     <form method=['POST'] action='/new_trip'>
     <div>
@@ -74,6 +84,14 @@
     <script src='/static/js/location.js' type='text/javascript'></script>
     <script> 
 
+    function displayItem(result) {
+        console.log(result.location_visit_items_id);
+        // $('#item-list').append('<p id='+result.item_id+'>'+result.category+': '+result.description+'</p> <div class="remove">X</div>');
+        $('#packing-list tbody').append(
+            '<tr id='+result.location_visit_items_id+'>'+
+            '<th>'+result.category+'</th><th>'+result.description+'</th>'+
+            '<th><div class="remove">X</div></th></tr>');
+    }
 
     function addItem(evt) {
         evt.preventDefault();
@@ -83,13 +101,23 @@
             "description": $('#item-description').val()
         };
 
-        $.post("/create_list", formInputs);
-        $("#item-list").after('<p>['+formInputs['category']+'] '+formInputs['description']+'</p>');
+        $.post("/create_list", formInputs, displayItem);
+        // $("#item-list").after('<p>['+formInputs['category']+'] '+formInputs['description']+'</p>');
         $("#item-description").val("");
 
     }
 
     $('#new-item').on('submit', addItem);
+
+
+    $(document).on('click','.remove',function(){
+        console.log('hi');
+        var id = $(this).closest('tr').attr("id");        
+        $.get('/remove_item', {item_id: id});    
+        $(this).closest("tr").remove();
+        console.log(id);
+
+    });
 
     </script>
 

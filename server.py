@@ -5,7 +5,7 @@ import urllib2
 import json
 from random import choice
 
-from flask import Flask, render_template, request, flash, redirect, session
+from flask import Flask, render_template, request, flash, redirect, session, jsonify
 from flask_debugtoolbar import DebugToolbarExtension
 
 from model import (connect_to_db, db, User, Trip, Location, Image, LocationVisit, 
@@ -310,14 +310,21 @@ def add_item():
 
     #create new location_visit_items instance
     new_location_visit_item = LocationVisitItem(location_visit_id=location_visit_id, item_id=new_item.item_id)
+    
     db.session.add(new_location_visit_item)
-
     db.session.commit()
 
-    #get item_id and return it
     item_id = new_location_visit_item.location_visit_items_id
 
-    return jsonify(item_id)
+    item_details = db.session.query(Item.description, Category.category_name).join(Category, LocationVisitItem).filter_by(location_visit_items_id=item_id).one()
+  
+    item_dict = {}
+
+    item_dict['location_visit_items_id'] = item_id
+    item_dict['category'] = item_details[1]
+    item_dict['description'] = item_details[0]
+
+    return jsonify(item_dict)
 
 
 @app.route('/remove_item')
@@ -327,7 +334,8 @@ def remove_item():
     item_id = request.args.get('item_id')
     
     # get item from db
-    item = db.session.query(LocationVisitItem).filter_by(item_id=item_id).one()
+    item = db.session.query(LocationVisitItem).filter_by(location_visit_items_id=item_id).first()
+    print item
 
     # delete item from location_visit_items table
     db.session.delete(item)
