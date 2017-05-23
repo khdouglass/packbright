@@ -192,12 +192,48 @@ class Item(db.Model):
 
         return "<Items item_id=%s category_id=%s>" % (self.item_id, self.category_id)
 
+def example_data():
+    """Create sample data for testing."""
 
-def connect_to_db(app):
+    User.query.delete()
+    Trip.query.delete()
+    Location.query.delete()
+    CoreList.query.delete()
+    Category.query.delete()
+
+    user = User(user_id='khdouglass', first_name='Kathryn', last_name='Douglass', email='email@gmail.com', password='1234')
+    db.session.add(user)
+    db.session.commit()
+    trips = [('khdouglass', 'California vacation'), ('khdouglass', 'Winter trip to NYC')]
+    locations = ['Seattle, WA, United States','Los Angeles, CA, United States', 'New York, NY, United States']
+    new_core_list = CoreList(user_id='khdouglass')
+    categories = ['Jeans', 'Pants', 'Shorts', 'Skirts', 'Dress', 'Tank Top', 'Shirt',
+                  'Sweater', 'Turtleneck', 'Jacket', 'Shoes', 'Suit', 
+                  'Swimsuit','Socks', 'Undergarments', 'Jewelry', 'Belt', 'Scarf', 
+                  'Hair Products / Tools', 'Make Up', 'Tolietries', 'Technology']
+
+    for trip in trips:
+        new_trip = Trip(user_id=trip[0], trip_name=trip[1])
+        db.session.add(new_trip)
+
+    for location in locations:
+        new_location = Location(location_name=location)
+        db.session.add(new_location)    
+    
+    for category in categories:
+        new_category = Category(category_name=category)
+        db.session.add(new_category)
+
+    db.session.add_all([user, new_core_list])
+    db.session.commit()
+
+
+
+def connect_to_db(app, db_uri='postgresql:///packing'):
     """Connect the database to our Flask app."""
 
     # Configure to use PostgreSQL database
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///packing'
+    app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['SQLALCHEMY_ECHO'] = True
     db.app = app

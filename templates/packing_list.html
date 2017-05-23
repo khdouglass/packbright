@@ -3,6 +3,7 @@
 {% block title %}PACK MANAGER{% endblock %}
 
 {% block content %}
+
     <style>
         .weather {
             display: inline-block; 
@@ -47,11 +48,59 @@
         </tbody>  
     </table>    
 
+    <form id='new-item' action='/create_list' method='POST'>
+        Item Category: 
+        <select id='item-category' name='category'>
+            <option value="" disabled selected>Choose One</option>
+            {% for category in categories %}
+            <option value='{{ category[0] }}'>{{ category[0] }}</option>
+            {% endfor %}
+        </select>
+
+        Item Description: <input type='text' id='item-description' name='description'>
+        
+        Item Location: 
+        <select id='item-location' name='location'>
+            {% for location in location_list %}
+            <option value='{{ location[0] }}'>{{ location[0] }}</option>
+            {% endfor %}
+        </select>
+
+        <input type="Submit" value='Add Item'>
+    </form>
+
     <form action='/reset_trip'>
         <input type='submit' value='Start a new trip!'>
     </form>
 
     <script>
+
+        function displayItem(result) {
+            console.log(result.location_visit_items_id);
+            // $('#item-list').append('<p id='+result.item_id+'>'+result.category+': '+result.description+'</p> <div class="remove">X</div>');
+            $('#packing-list tbody').append(
+                '<tr id='+result.location_visit_items_id+'><th>'+result.category+'</th><th>'
+                +result.description+'</th><th>'+result.location+'</th><th><div class="remove">X</div></th></tr>');
+        }
+
+        function addItem(evt) {
+            evt.preventDefault();
+
+            var formInputs = {
+                "category": $('#item-category').val(),
+                "description": $('#item-description').val(),
+                "location": $('#item-location').val()
+            };
+
+            $.post("/create_list", formInputs, displayItem);
+            // $("#item-list").after('<p>['+formInputs['category']+'] '+formInputs['description']+'</p>');
+            $("#item-description").val("");
+
+        }
+
+        $('#new-item').on('submit', addItem);
+
+
 
         $(".remove").on('click', function () {
             var id = $(this).closest('tr').attr("id");        

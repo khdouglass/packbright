@@ -3,6 +3,7 @@
 from jinja2 import StrictUndefined
 import urllib2
 import json
+import helper_functions
 from random import choice
 
 from flask import Flask, render_template, request, flash, redirect, session, jsonify
@@ -103,8 +104,12 @@ def logout():
 def user_landing(user_id):
     """Display user landing page."""
 
-    # query db for user's trips to display
+    # gtet user's trips to from db to display
     trips = db.session.query(Trip.trip_name).filter_by(user_id=user_id).all()
+
+    # clear session for new trip
+    if 'trip_name' in session:
+        del session['trip_name']
 
     return render_template('user_landing.html', trips=trips)
 
@@ -113,57 +118,73 @@ def user_landing(user_id):
 def core_list():
     """Create user core packling list."""
 
+    # get user_id from session
     user_id = session['user_id'] 
 
-    # query db for user's core list
-    core_list_id = db.session.query(CoreList.core_list_id).filter_by(user_id='user_id').first()
+    # get core list items and categories from db 
+    core_list = db.session.query(Item.description, Category.category_name, CoreListItem.core_list_item_id).join(CoreListItem, CoreList, Category).filter(CoreList.user_id==user_id).all()
+    categories = db.session.query(Category.category_name).order_by(Category.category_name).all()
 
-    # create user's core list in db
-    if core_list_id is not None:
-        core_list = db.session.query(Item.description, Category.category_name).join(CoreListItem, CoreList, Category).filter(CoreList.user_id=='user_id').all()
 
-        return render_template('core_list.html', core_list=core_list)
-    else:
-        # get categories from DB
-        categories = db.session.query(Category.category_name).order_by(Category.category_name).all()
-
-        return render_template('create_core_list.html', categories=categories)
-
+    return render_template('create_core_list.html', core_list=core_list, categories=categories)
+   
 
 @app.route('/create_core_list', methods=['POST'])
 def process_core_list():
     """Add items to user's core packing list."""
 
-        
-    # else:
-    #     core_list_id = CoreList(user_id='user_id')
-    #     db.session.add(core_list_id)
-    #     db.session.commit()
+    # get user_id from session
+    user_id = session['user_id']
 
+    # get core_list_id from db
+    core_list_id = db.session.query(CoreList.core_list_id).filter_by(user_id=user_id).first()
+    core_list_id = core_list_id[0]
 
-    # get user input from html
+    if core_list_id is None:
+        user_core_list = CoreList(user_id=user_id)
+        db.session.add(user_core_list)
+        db.session.commit()
+        core_list_id = user_core_list.core_list_id
+
+    # get user input from form
     item_category = request.form.get('category')
     item_description = request.form.get('description')
 
-    # query db for id associated with item_category
-    category_id = db.session.query(Category.category_id).filter_by(category_name=item_category).one()
+    # create new item in db
+    new_item = helper_functions.get_new_item(item_category, item_description)
 
-    # query db for item matching category and description from user
-    new_item = db.session.query(Item).filter_by(category_id=category_id, description=item_description).first()
+    # create new core item in db
+    new_core_item = helper_functions.get_core_item(core_list_id, new_item.item_id)
 
-    # create new item if not in db
-    if new_item is None:
-        new_item = Item(category_id=category_id, description=item_description)
-        db.session.add(new_item)
-        db.session.commit()
+    # get core list id for core list item
+    core_item_id = new_core_item.core_list_item_id
+    # get item description and category from db
+    core_item_details = db.session.query(Item.description, Category.category_name).join(Category, CoreListItem).filter_by(core_list_item_id=core_item_id).one()
+    core_item_dict = {}
 
-    #create new core_list_items instance
-    core_list_item = CoreListItem(core_list_id=core_list_id, item_id=new_item.item_id)
-    db.session.add(core_list_item)
+    # add item info to dictionary
+    core_item_dict['core_item_id'] = core_item_id
+    core_item_dict['category'] = core_item_details[1]
+    core_item_dict['description'] = core_item_details[0]
 
+    # return dictionary in json
+    return jsonify(core_item_dict)
+
+
+@app.route('/remove_core_item')
+def remove_core_item():
+    """Remove item from location visit list."""
+
+    item_id = request.args.get('item_id')
+    
+    # get item from db
+    item = db.session.query(CoreListItem).filter_by(core_list_item_id=item_id).first()
+
+    # delete item from location_visit_items table
+    db.session.delete(item)
     db.session.commit()
 
-    return "Item added"
+    return "Item deleted"
 
 
 @app.route('/new_trip')
@@ -292,6 +313,7 @@ def add_item():
     # get user input from html
     item_category = request.form.get('category')
     item_description = request.form.get('description')
+    item_location = request.form.get('location')
 
     # query db for id associated with item_category
     category_id = db.session.query(Category.category_id).filter_by(category_name=item_category).one()
@@ -305,26 +327,51 @@ def add_item():
         db.session.add(new_item)
         db.session.commit()
 
-    # get location id from session
-    location_visit_id = session['location_visit_id']
-
-    #create new location_visit_items instance
-    new_location_visit_item = LocationVisitItem(location_visit_id=location_visit_id, item_id=new_item.item_id)
+    if item_location:
+        trip_id = session['trip_id']
+        location_id = db.session.query(Location.location_id).filter_by(location_name=item_location)
+        location_visit_id = db.session.query(LocationVisit.location_visit_id).filter_by(location_id=location_id, trip_id=trip_id).one()
+        
+        new_location_visit_item = LocationVisitItem(location_visit_id=location_visit_id, item_id=new_item.item_id)
     
-    db.session.add(new_location_visit_item)
-    db.session.commit()
+        db.session.add(new_location_visit_item)
+        db.session.commit()
 
-    item_id = new_location_visit_item.location_visit_items_id
+        item_id = new_location_visit_item.location_visit_items_id
 
-    item_details = db.session.query(Item.description, Category.category_name).join(Category, LocationVisitItem).filter_by(location_visit_items_id=item_id).one()
-  
-    item_dict = {}
+        item_details = db.session.query(Item.description, Category.category_name).join(Category, LocationVisitItem).filter_by(location_visit_items_id=item_id).one()
+        
 
-    item_dict['location_visit_items_id'] = item_id
-    item_dict['category'] = item_details[1]
-    item_dict['description'] = item_details[0]
+        item_dict = {}
 
-    return jsonify(item_dict)
+        item_dict['location_visit_items_id'] = item_id
+        item_dict['category'] = item_details[1]
+        item_dict['description'] = item_details[0]
+        item_dict['location'] = item_location
+
+        return jsonify(item_dict)
+    else:
+        # get location id from session
+        location_visit_id = session['location_visit_id']
+
+        #create new location_visit_items instance
+        new_location_visit_item = LocationVisitItem(location_visit_id=location_visit_id, item_id=new_item.item_id)
+
+        db.session.add(new_location_visit_item)
+        db.session.commit()
+
+        item_id = new_location_visit_item.location_visit_items_id
+
+        item_details = db.session.query(Item.description, Category.category_name).join(Category, LocationVisitItem).filter_by(location_visit_items_id=item_id).one()
+
+
+        item_dict = {}
+
+        item_dict['location_visit_items_id'] = item_id
+        item_dict['category'] = item_details[1]
+        item_dict['description'] = item_details[0]
+
+        return jsonify(item_dict)
 
 
 @app.route('/remove_item')
@@ -335,7 +382,6 @@ def remove_item():
     
     # get item from db
     item = db.session.query(LocationVisitItem).filter_by(location_visit_items_id=item_id).first()
-    print item
 
     # delete item from location_visit_items table
     db.session.delete(item)
@@ -351,16 +397,24 @@ def complete_list(trip_name):
     user_id = session['user_id']
 
     trip_id = db.session.query(Trip.trip_id).filter_by(trip_name=trip_name).one()
+    location_list = db.session.query(Location.location_name).join(LocationVisit, Trip).filter_by(trip_id=trip_id).all()
+
+    session['trip_id'] = trip_id
+
+    # get list of categories from db
+    categories = db.session.query(Category.category_name).order_by(Category.category_name).all()
 
     # query db for location weather
     location_weather_list = db.session.query(Weather.temperature_high, Weather.temperature_low, WeatherSummary.icon_url, Location.location_name).join(WeatherSummary, LocationVisit, Location).filter(LocationVisit.trip_id==trip_id).all()
 
     # query db for trip items
     trip_locations = db.session.query(LocationVisit.location_visit_id).join(Trip).filter_by(trip_name=trip_name).all()
-    items = db.session.query(Item.description, Item.item_id, Location.location_name, Category.category_name).join(LocationVisitItem, LocationVisit, Category, Location).filter(LocationVisit.location_visit_id.in_(trip_locations)).all()
+    items = db.session.query(Item.description, LocationVisitItem.location_visit_items_id, Location.location_name, Category.category_name).join(LocationVisitItem, LocationVisit, Category, Location).filter(LocationVisit.location_visit_id.in_(trip_locations)).all()
     core_list = db.session.query(Item.description, Category.category_name).join(CoreListItem, CoreList, Category).filter(CoreList.user_id==user_id).all()
 
-    return render_template('packing_list.html', items=items, trip_name=trip_name, core_list=core_list, location_weather_list=location_weather_list)
+    return render_template('packing_list.html', items=items, trip_name=trip_name, core_list=core_list, 
+                                                location_weather_list=location_weather_list, categories=categories,
+                                                location_list=location_list)
 
 
 @app.route('/reset_trip')

@@ -5,7 +5,27 @@
 {% block content %}
 
     <div>Core Packing List</div>    
+
+    <table id='core-list' class='tablesorter' style='width:50%'>
+        <thead>
+            <tr>
+                <th>Category</th>
+                <th>Item</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in core_list %}
+            <tr id='{{ item[2] }}'>
+                <th>{{ item[1] }}</th>
+                <th>{{ item[0] }}</th>
+                <th><div class='remove'>X</div></th>
+            </tr>
+            {% endfor %}
+        </tbody> 
+    </table> 
+
     <p>This items will be automatically be added to all trip packing lists.</p>
+
     <form id='new-item' method='POST'>
         Item Category: 
         <select id='item-category' name='category'>
@@ -18,16 +38,29 @@
         <input type="Submit" value='Add Item'>
     </form>
 
-    <h3 id='item-list'> Your List: </h3>
-
-    <form action='/user_landing'>
+    <form action='/user_landing/{{ session["user_id"] }}'>
         <input type='submit' value='Core list finished!'>
     </form>
 
-    <script src='https://code.jquery.com/jquery.js'></script>
-    <script src='/static/js/location.js' type='text/javascript'></script>
-    
+    <script src='https://code.jquery.com/jquery.js'></script>    
+    <script type="text/javascript" src="https://mottie.github.io/tablesorter/dist/js/jquery.tablesorter.min.js"></script>
+
     <script> 
+
+    $(document).ready(function() { 
+        $("#core-list").tablesorter(); 
+    } 
+    ); 
+
+    function displayItem(result) {
+        console.log(result.core_item_id);
+        $('#core-list tbody').prepend(
+            '<tr id='+result.core_item_id+'>'+
+            '<th>'+result.category+'</th><th>'+result.description+'</th>'+
+            '<th><div class="remove">X</div></th></tr>');
+    }
+
+
     function addItem(evt) {
         evt.preventDefault();
 
@@ -36,12 +69,24 @@
             "description": $('#item-description').val()
         };
 
-        $.post("/core_list", formInputs);
-        $("#item-list").after('<p>['+formInputs['category']+'] '+formInputs['description']+'</p>');
+        $.post("/create_core_list", formInputs, displayItem);
         $("#item-description").val("");
+
     }
 
     $('#new-item').on('submit', addItem);
+
+
+    $(document).on('click','.remove',function(){
+        console.log('hi');
+        var id = $(this).closest('tr').attr("id");        
+        $.get('/remove_core_item', {item_id: id});    
+        $(this).closest("tr").remove();
+        console.log(id);
+
+    });
+
+
     </script>
 
 {% endblock %}

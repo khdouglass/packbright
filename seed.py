@@ -35,7 +35,7 @@ def load_trips():
 def load_locations():
     """Load locations into database."""
 
-    locations = ['Seattle', 'Disneyland', 'Lake Tahoe', 'New York City', 'Yellowstone']
+    locations = ['Seattle, WA, United States','Los Angeles, CA, United States', 'New York, NY, United States']
 
     for location in locations:
         new_location = Location(location_name=location)
@@ -97,7 +97,7 @@ def load_weather_summary():
               ('Mostly Cloudy', '/static/img/mostlycloudy.png'), ('Mostly Sunny', '/static/img/mostlysunny.png'),
               ('Partly Cloudy', '/static/img/partlycloudy.png'), ('Partly Sunny', '/static/img/partlysunny.png'),
               ('Sleet', '/static/img/sleet.png'), ('Snow', '/static/img/snow.png'), ('Sunny', '/static/img/sunny.png'),
-              ('Thunderstorms', '/static/img/tstorms.png'), ('Unknown', '/static/img/unknown.png'), ('Overcast', '/static/img/cloudy.png')]
+              ('Thunderstorm', '/static/img/tstorms.png'), ('Unknown', '/static/img/unknown.png'), ('Overcast', '/static/img/cloudy.png')]
 
     for image in images:
         new_image = WeatherSummary(weather_summary_id=image[0], icon_url=image[1])
@@ -144,7 +144,7 @@ def load_categories():
     categories = ['Jeans', 'Pants', 'Shorts', 'Skirts', 'Dress', 'Tank Top', 'Shirt',
                   'Sweater', 'Turtleneck', 'Jacket', 'Shoes', 'Suit', 
                   'Swimsuit','Socks', 'Undergarments', 'Jewelry', 'Belt', 'Scarf', 
-                  'Hair Accessories', 'Hair Styling Tools', 'Make Up', 'Tolietries']
+                  'Hair Products / Tools', 'Make Up', 'Tolietries', 'Technology']
 
     for category in categories:
         new_category = Category(category_name=category)
