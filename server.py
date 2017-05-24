@@ -78,11 +78,11 @@ def login():
 
     # flash message and redirect if username or password is incorrect
     if user is None:
-        flash("User does not exist!")
+        flash('User does not exist!')
         return redirect('/')
 
     if user.password != password:
-        flash("Password is incorrect!")
+        flash('Password is incorrect!')
         return redirect('/')
 
     # set session to user_id
@@ -100,7 +100,7 @@ def logout():
     return redirect('/')
 
 
-@app.route('/user_landing/<user_id>', methods=['GET'])
+@app.route('/user_landing/<user_id>')
 def user_landing(user_id):
     """Display user landing page."""
 
@@ -158,6 +158,7 @@ def process_core_list():
 
     # get core list id for core list item
     core_item_id = new_core_item.core_list_item_id
+    
     # get item description and category from db
     core_item_details = db.session.query(Item.description, Category.category_name).join(Category, CoreListItem).filter_by(core_list_item_id=core_item_id).one()
     core_item_dict = {}
@@ -187,32 +188,18 @@ def remove_core_item():
     return "Item deleted"
 
 
-@app.route('/new_trip')
+@app.route('/new_trip', methods=['POST'])
 def new_trip():
     """Create new trip."""
 
-    user_id = session['user_id']
-
     # get location and trip name from user entry
-    location = request.args.get('location')
+    location = request.form.get('location')
     
-    # if trip name already in session, keep it
-    if 'trip_name' in session:
-        trip_name = session['trip_name']
-        new_trip = db.session.query(Trip).filter_by(trip_name=trip_name, user_id=user_id).one()
-    else:
-        # if not, get name from html and add to db
-        trip_name = request.args.get('trip_name')
-        new_trip = Trip(user_id=user_id, trip_name=trip_name)
-        db.session.add(new_trip)
+    # add trip to database if not already in db, return object
+    new_trip = helper_functions.get_trip_name()
    
-    # add location to database if not already in db
-    db_location = db.session.query(Location).filter_by(location_name=location).first()
-    if db_location is None:
-        new_location = Location(location_name=location)
-        db.session.add(new_location)
-    else:
-        new_location = db_location
+    # add location to database if not already in db, return object
+    new_location = helper_functions.get_location(location)
 
     # format location to get weather information from wunderground api
     location = location.split(',')
@@ -247,6 +234,7 @@ def new_trip():
         weather_low_avg += int(temp_low)
 
     f.close()
+    print weather_list
 
     # add weather details to DB
     new_weather = Weather(weather_summary_id=weather_list[2][1], temperature_high=(weather_high_avg / 3), 
@@ -263,13 +251,12 @@ def new_trip():
     # add information to session
     session['location'] = location
     session['weather_list'] = weather_list
-    session['trip_name'] = trip_name
     session['location_visit_id'] = new_visit.location_visit_id
 
     # occassions for html
     occassions = ['Business', 'Party', 'Relaxing', 'Tourism', 'Camping']
 
-    return render_template('new_trip.html', location=location, trip_name=trip_name, 
+    return render_template('new_trip.html', location=location, trip_name=new_trip.trip_name, 
                                             weather_list=weather_list, occassions=occassions)
 
 
@@ -308,7 +295,7 @@ def create_list():
 
 @app.route('/create_list', methods=['POST'])
 def add_item():
-    """Add item to list for location visit to database."""
+    """Add item for location visit to database."""
 
     # get user input from html
     item_category = request.form.get('category')
@@ -323,55 +310,37 @@ def add_item():
 
     # create new item if not in db
     if new_item is None:
-        new_item = Item(category_id=category_id, description=item_description)
-        db.session.add(new_item)
-        db.session.commit()
+        new_item = helper_functions.get_new_item(item_category, item_description)
 
+    # if this is an additional item added to a completed trip list
     if item_location:
         trip_id = session['trip_id']
+        # get location_id and location_visit_id from db using trip_id
         location_id = db.session.query(Location.location_id).filter_by(location_name=item_location)
         location_visit_id = db.session.query(LocationVisit.location_visit_id).filter_by(location_id=location_id, trip_id=trip_id).one()
-        
-        new_location_visit_item = LocationVisitItem(location_visit_id=location_visit_id, item_id=new_item.item_id)
-    
-        db.session.add(new_location_visit_item)
-        db.session.commit()
-
-        item_id = new_location_visit_item.location_visit_items_id
-
-        item_details = db.session.query(Item.description, Category.category_name).join(Category, LocationVisitItem).filter_by(location_visit_items_id=item_id).one()
-        
-
-        item_dict = {}
-
-        item_dict['location_visit_items_id'] = item_id
-        item_dict['category'] = item_details[1]
-        item_dict['description'] = item_details[0]
-        item_dict['location'] = item_location
-
-        return jsonify(item_dict)
     else:
-        # get location id from session
         location_visit_id = session['location_visit_id']
 
-        #create new location_visit_items instance
-        new_location_visit_item = LocationVisitItem(location_visit_id=location_visit_id, item_id=new_item.item_id)
+    #create new location_visit_items instance
+    new_location_visit_item = LocationVisitItem(location_visit_id=location_visit_id, item_id=new_item.item_id)
 
-        db.session.add(new_location_visit_item)
-        db.session.commit()
+    db.session.add(new_location_visit_item)
+    db.session.commit()
 
-        item_id = new_location_visit_item.location_visit_items_id
+    item_id = new_location_visit_item.location_visit_items_id
 
-        item_details = db.session.query(Item.description, Category.category_name).join(Category, LocationVisitItem).filter_by(location_visit_items_id=item_id).one()
+    item_details = db.session.query(Item.description, Category.category_name).join(Category, LocationVisitItem).filter_by(location_visit_items_id=item_id).one()
 
 
-        item_dict = {}
+    item_dict = {}
 
-        item_dict['location_visit_items_id'] = item_id
-        item_dict['category'] = item_details[1]
-        item_dict['description'] = item_details[0]
+    item_dict['location_visit_items_id'] = item_id
+    item_dict['category'] = item_details[1]
+    item_dict['description'] = item_details[0]
+    item_dict['location'] = item_location
 
-        return jsonify(item_dict)
+
+    return jsonify(item_dict)
 
 
 @app.route('/remove_item')

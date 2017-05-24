@@ -195,36 +195,93 @@ class Item(db.Model):
 def example_data():
     """Create sample data for testing."""
 
-    User.query.delete()
-    Trip.query.delete()
     Location.query.delete()
     CoreList.query.delete()
     Category.query.delete()
+    Item.query.delete()
+    CoreListItem.query.delete()
+    Trip.query.delete()
+    User.query.delete()
+    WeatherSummary.query.delete()
+    LocationVisit.query.delete()
+    LocationVisitItem.query.delete()
+    Weather.query.delete()
 
     user = User(user_id='khdouglass', first_name='Kathryn', last_name='Douglass', email='email@gmail.com', password='1234')
     db.session.add(user)
     db.session.commit()
-    trips = [('khdouglass', 'California vacation'), ('khdouglass', 'Winter trip to NYC')]
+    
     locations = ['Seattle, WA, United States','Los Angeles, CA, United States', 'New York, NY, United States']
+    for location in locations:
+        new_location = Location(location_name=location)
+        db.session.add(new_location)    
+    db.session.commit()    
+
     new_core_list = CoreList(user_id='khdouglass')
+    db.session.add(new_core_list)
+    db.session.commit()
+    
     categories = ['Jeans', 'Pants', 'Shorts', 'Skirts', 'Dress', 'Tank Top', 'Shirt',
                   'Sweater', 'Turtleneck', 'Jacket', 'Shoes', 'Suit', 
                   'Swimsuit','Socks', 'Undergarments', 'Jewelry', 'Belt', 'Scarf', 
                   'Hair Products / Tools', 'Make Up', 'Tolietries', 'Technology']
-
-    for trip in trips:
-        new_trip = Trip(user_id=trip[0], trip_name=trip[1])
-        db.session.add(new_trip)
-
-    for location in locations:
-        new_location = Location(location_name=location)
-        db.session.add(new_location)    
-    
     for category in categories:
         new_category = Category(category_name=category)
         db.session.add(new_category)
+    db.session.commit()
 
-    db.session.add_all([user, new_core_list])
+    items = [(8, 'Black sweater from J.Crew'), (1, 'Light denim flares'), 
+             (9, 'Tan turtleneck'), (2, 'Cutoff Levis'), (1, 'Dark skinny jeans'),
+             (2, 'Black leggings'), (3, 'Denim shorts'), (3, 'Running shorts'), 
+             (4, 'Floral skirt'), (5, 'White ruffle dress'), (5, 'Yellow sundress'),
+             (6, 'White ribbed tank'), (7, 'White collared shirt'), (7, 'Black silk blouse'), 
+             (10, 'Leather jacket'), (10, 'Trench'), (11, 'Tennis shoes'), (11, 'Sandals'),
+             (16, 'Gold bracelet'), (19, 'Headband'), (20, 'Blow dryer'), (21, 'Mascara'), 
+             (21, 'Red lipstick'), (22, 'Tootbrush'), (22, 'Toothpaste'), (22, 'Deodorant')]
+    for item in items:
+        new_item = Item(category_id=item[0], description=item[1])
+        db.session.add(new_item)
+    db.session.commit()
+
+    core_list_items = [(1, 21), (1, 22), (1, 23), (1, 24), (1, 25), (1, 26)]
+    for item in core_list_items:
+        new_core_item = CoreListItem(core_list_id=item[0], item_id=item[1])
+        db.session.add(new_core_item)
+
+    trips = [('khdouglass', 'California vacation'), ('khdouglass', 'Winter trip to NYC')]
+    for trip in trips:
+        new_trip = Trip(user_id=trip[0], trip_name=trip[1])
+        db.session.add(new_trip)
+        db.session.commit()
+
+    images = [('Chance Flurries', '/static/img/chanceflurries.png'), ('Clear', '/static/img/clear.png'), 
+              ('Rain', '/static/img/rain.png'), ('Chance of Rain', '/static/img/chancerain.png'), 
+              ('Chance of Sleet', '/static/img/chancesleet.png'), ('Chance of Snow', '/static/img/chancesnow.png'),
+              ('Chance of a Thunderstorm', '/static/img/chancetstorms.png'), ('Cloudy', '/static/img/cloudy.png'),
+              ('Flurries', '/static/img/flurries.png'), ('Fog', '/static/img/fog.png'), ('Hazy', '/static/img/hazy.png'),
+              ('Mostly Cloudy', '/static/img/mostlycloudy.png'), ('Mostly Sunny', '/static/img/mostlysunny.png'),
+              ('Partly Cloudy', '/static/img/partlycloudy.png'), ('Partly Sunny', '/static/img/partlysunny.png'),
+              ('Sleet', '/static/img/sleet.png'), ('Snow', '/static/img/snow.png'), ('Sunny', '/static/img/sunny.png'),
+              ('Thunderstorm', '/static/img/tstorms.png'), ('Unknown', '/static/img/unknown.png'), ('Overcast', '/static/img/cloudy.png')]
+
+    for image in images:
+        new_image = WeatherSummary(weather_summary_id=image[0], icon_url=image[1])
+        db.session.add(new_image)
+        db.session.commit()
+
+    new_weather = Weather(weather_summary_id='Clear', temperature_high=72, temperature_low=60)
+    db.session.add(new_weather)
+    db.session.commit()
+
+    new_visit = LocationVisit(trip_id=1, weather_id=1, location_id=2, private=False)
+    db.session.add(new_visit)
+    db.session.commit()
+
+    items = [(1, 1), (1, 2), (1, 3), (1, 6), (1, 16), (1, 17), (1, 20)]
+    for item in items:
+        new_item = LocationVisitItem(location_visit_id=item[0], item_id=item[1])
+        db.session.add(new_item)
+
     db.session.commit()
 
 
