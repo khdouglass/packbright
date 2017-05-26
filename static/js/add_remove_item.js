@@ -24,7 +24,6 @@ function addItem(evt) {
 
 $('#new-item').on('submit', addItem);
 
-
 function addSuggItem(evt) {
     evt.preventDefault();
     // debugger;
@@ -38,7 +37,6 @@ function addSuggItem(evt) {
 }
 
 $('.add').on('click', addSuggItem);
-
 
 $(document).on('click','.remove',function(){
     var id = $(this).closest('tr').attr("id");        
