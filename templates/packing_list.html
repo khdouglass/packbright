@@ -73,46 +73,6 @@
         <input type='submit' value='Start a new trip!'>
     </form>
 
-    <script>
-
-        function displayItem(result) {
-            console.log(result.location_visit_items_id);
-            // $('#item-list').append('<p id='+result.item_id+'>'+result.category+': '+result.description+'</p> <div class="remove">X</div>');
-            $('#packing-list tbody').append(
-                '<tr id='+result.location_visit_items_id+'><th>'+result.category+'</th><th>'
-                +result.description+'</th><th>'+result.location+'</th><th><div class="remove">X</div></th></tr>');
-        }
-
-        function addItem(evt) {
-            evt.preventDefault();
-
-            var formInputs = {
-                "category": $('#item-category').val(),
-                "description": $('#item-description').val(),
-                "location": $('#item-location').val()
-            };
-
-            $.post("/create_list", formInputs, displayItem);
-            // $("#item-list").after('<p>['+formInputs['category']+'] '+formInputs['description']+'</p>');
-            $("#item-description").val("");
-
-        }
-
-        $('#new-item').on('submit', addItem);
-
-
-
-        $(".remove").on('click', function () {
-            var id = $(this).closest('tr').attr("id");        
-            $.get('/remove_item', {item_id: id});    
-            $(this).closest("tr").remove();
-            console.log(id);
-        });
-
-        $(function(){
-          $("#packing-list").tablesorter();
-        });
-
-    </script>
+    <script type='text/javascript' src='/static/js/add_remove_item.js'></script>
 
 {% endblock %}

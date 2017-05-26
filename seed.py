@@ -35,7 +35,7 @@ def load_trips():
 def load_locations():
     """Load locations into database."""
 
-    locations = ['Seattle, WA, United States','Los Angeles, CA, United States', 'New York, NY, United States']
+    locations = ['Los Angeles, CA, United States', 'New York, NY, United States']
 
     for location in locations:
         new_location = Location(location_name=location)
@@ -47,10 +47,10 @@ def load_images():
     """Load location images into database."""
 
     images = [(1, 1, "http://www.arikhanson.com/wp-content/uploads/2012/06/PublicMarket.jpg"),
-              (2, 1, "http://68.media.tumblr.com/tumblr_m7bd4f8GAt1r1thfzo5_1280.jpg)"),
-              (3, 7, "http://www.butterflydiary.com/wp-content/uploads/2013/08/LakeTahoe7.jpg"),
-              (4, 10, "http://68.media.tumblr.com/b715cf8b93a38305b866be7b2e618a87/tumblr_mwoj9h51Ws1r1thfzo4_1280.jpg"),
-              (5, 9, "http://68.media.tumblr.com/13494ab052d7666b0b5e94259e29f313/tumblr_o11ta45neq1r1thfzo2_1280.jpg")]
+              (2, 1, "http://68.media.tumblr.com/tumblr_m7bd4f8GAt1r1thfzo5_1280.jpg)")]
+              # (3, 7, "http://www.butterflydiary.com/wp-content/uploads/2013/08/LakeTahoe7.jpg"),
+              # (4, 10, "http://68.media.tumblr.com/b715cf8b93a38305b866be7b2e618a87/tumblr_mwoj9h51Ws1r1thfzo4_1280.jpg"),
+              # (5, 9, "http://68.media.tumblr.com/13494ab052d7666b0b5e94259e29f313/tumblr_o11ta45neq1r1thfzo2_1280.jpg")]
 
     for image in images:
         new_image = Image(location_id=image[0], month=image[1], image_url=image[2])
@@ -62,7 +62,7 @@ def load_images():
 def load_location_visits():
     """Load location visits into database."""
 
-    visits = [(1, 2, 4, False), (2, 1, 2, True), (2, 3, 3, True)]
+    visits = [(1, 1, 1, False), (2, 2, 2, True)]
 
     for visit in visits:
         new_visit = LocationVisit(trip_id=visit[0], weather_id=visit[1], location_id=visit[2], private=visit[3])
@@ -109,7 +109,7 @@ def load_location_visit_items():
     """Load location visit items into database."""
 
     items = [(1, 1), (1, 2), (1, 3), (1, 6), (1, 16), (1, 17), (1, 20),
-             (2, 7), (2, 12), (2, 18), (2, 19), (3, 4), (3, 14), (3, 15)]
+             (2, 7), (2, 12), (2, 18), (2, 19), (2, 4), (2, 14), (2, 15)]
 
     for item in items:
         new_item = LocationVisitItem(location_visit_id=item[0], item_id=item[1])
@@ -144,7 +144,8 @@ def load_categories():
     categories = ['Jeans', 'Pants', 'Shorts', 'Skirts', 'Dress', 'Tank Top', 'Shirt',
                   'Sweater', 'Turtleneck', 'Jacket', 'Shoes', 'Suit', 
                   'Swimsuit','Socks', 'Undergarments', 'Jewelry', 'Belt', 'Scarf', 
-                  'Hair Products / Tools', 'Make Up', 'Tolietries', 'Technology']
+                  'Hair Products / Tools', 'Make Up', 'Tolietries', 'Technology',
+                  'Travel Supplies', 'Accessories']
 
     for category in categories:
         new_category = Category(category_name=category)

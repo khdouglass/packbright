@@ -30,7 +30,7 @@ class Trip(db.Model):
     __tablename__ = "trips"
 
     trip_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    trip_name = db.Column(db.String(200), nullable=False, unique=True)
+    trip_name = db.Column(db.String(200), nullable=False)
     user_id = db.Column(db.String(20),db.ForeignKey('users.user_id'))
 
     def __repr__(self):
@@ -211,7 +211,7 @@ def example_data():
     db.session.add(user)
     db.session.commit()
     
-    locations = ['Seattle, WA, United States','Los Angeles, CA, United States', 'New York, NY, United States']
+    locations = ['Seattle, WA, United States', 'Los Angeles, CA, United States', 'New York, NY, United States']
     for location in locations:
         new_location = Location(location_name=location)
         db.session.add(new_location)    
@@ -222,9 +222,12 @@ def example_data():
     db.session.commit()
     
     categories = ['Jeans', 'Pants', 'Shorts', 'Skirts', 'Dress', 'Tank Top', 'Shirt',
-                  'Sweater', 'Turtleneck', 'Jacket', 'Shoes', 'Suit', 
+                  'Sweater', 'Turtleneck', 'Jacket', 'Shoes', 'Suit', 'Skin Care',
                   'Swimsuit','Socks', 'Undergarments', 'Jewelry', 'Belt', 'Scarf', 
-                  'Hair Products / Tools', 'Make Up', 'Tolietries', 'Technology']
+                  'Hair Products / Tools', 'Make Up', 'Tolietries', 'Technology',
+                  'Vitamins / Medications', 'Eye Care', 'Hat', 'Activewear',
+                  'Outdoor Equipment', 'Misc Items', 'Sleepwear']
+
     for category in categories:
         new_category = Category(category_name=category)
         db.session.add(new_category)

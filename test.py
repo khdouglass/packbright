@@ -136,6 +136,13 @@ class CoreListFlaskTests(TestCase):
         self.assertIn('Toothpaste', result.data)
 
 
+    def test_add_core_item(self):
+        """Test core item addition, returns json."""
+
+        result = self.client.post('/create_core_list', data={'category': 'Hair Products / Tools', 
+                                                             'description': 'Hair brush'})
+        self.assertIn('Hair Products', result.data)
+
     # def test_core_item_removal(self):
     #     """Test core item removal."""
 
@@ -176,7 +183,18 @@ class NewTripFlaskTests(TestCase):
 
         result = self.client.post('/new_trip', data={'location': 'Los Angeles, CA, United States', 
                                                     'trip_name': 'Southern California Trip'})
-        self.assertIn('Southern California Trip', result.data)
+        self.assertIn('Answer a few questions about your trip to Los Angeles', result.data)
+
+
+    def test_trip_in_progress(self):
+        """Test new_trip route with trip in progress."""
+
+        with self.client as c:
+            with c.session_transaction() as sess:
+                sess['trip_name'] = 'California vacation'    
+
+            result = self.client.post('/new_trip', data={'location': 'San Diego, CA, United States'})
+            self.assertIn('Answer a few questions about your trip to San Diego', result.data)           
 
 
     def test_survey(self):
@@ -189,20 +207,23 @@ class NewTripFlaskTests(TestCase):
                                         ('Thursday', 'Partly Cloudy', '68', '58', '/static/img/partlycloudy.png')]    
                 sess['location'] = 'Los Angeles, CA, United States'       
                 sess['trip_name'] = 'Southern California Trip'    
+                sess['trip_id'] = 1
 
             result = self.client.get('/create_list?num_outfits=2&purpose=Party&formal=yes')
             self.assertIn("You'll need 2 outfits", result.data)
 
 
     def test_add_item(self):
-        """Test adding items to location visit."""
+        """Test adding items to location visit, returns json."""
 
         with self.client as c:
             with c.session_transaction() as sess:
-                sess['location_visit_id'] = 1
+                sess['location_id'] = 2
+                sess['trip_id'] = 1
 
             result = self.client.post('/create_list', data={'category': 'Shirt', 
-                                                        'description': 'Grey t-shirt'})
+                                                        'description': 'Grey t-shirt', 
+                                                        'location': 'Los Angeles, CA, United States'})
 
             self.assertIn('Grey t-shirt', result.data)
 
@@ -230,6 +251,22 @@ class NewTripFlaskTests(TestCase):
 
             self.assertNotIn('trip_name', session)
             self.assertIn('Create new trip', result.data)
+
+
+    def test_user_landing_reset(self):
+        """Test trip reset on user_landing."""
+
+        with self.client as c:
+            with c.session_transaction() as sess:
+                sess['trip_name'] = 'California vacation'
+
+            result = self.client.get('/user_landing/khdouglass', query_string='khdouglass')
+
+            self.assertNotIn('trip_name', session)
+            self.assertIn('<h1>Create new trip</h1>', result.data)
+
+
+
 
 
 

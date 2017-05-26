@@ -234,18 +234,13 @@ def new_trip():
         weather_low_avg += int(temp_low)
 
     f.close()
-    print weather_list
 
     # add weather details to DB
-    new_weather = Weather(weather_summary_id=weather_list[2][1], temperature_high=(weather_high_avg / 3), 
-                              temperature_low=(weather_low_avg / 3))
-    db.session.add(new_weather)
-    db.session.commit()
+    new_weather = helper_functions.get_weather(weather_list, weather_high_avg, weather_low_avg)
 
     # add location visit to DB
     new_visit = LocationVisit(trip_id=new_trip.trip_id, weather_id=new_weather.weather_id, location_id=new_location.location_id, private=True)
     db.session.add(new_visit)
-
     db.session.commit()
 
     # add information to session
@@ -253,11 +248,17 @@ def new_trip():
     session['weather_list'] = weather_list
     session['location_visit_id'] = new_visit.location_visit_id
 
-    # occassions for html
-    occassions = ['Business', 'Party', 'Relaxing', 'Tourism', 'Camping']
+    num_location = db.session.query(LocationVisit).filter_by(trip_id = new_trip.trip_id).all()
+
+    # activities for html
+    activities = ['Business / Work', 'Party', 'Relaxing', 'Tourism', 'Hiking', 'Skiing',
+                  'Working Out', 'Camping', 'Swimming', 'Wedding / Special Event']
+
+    outfits = ['Formal', 'Casual', 'Active', 'Going Out']
 
     return render_template('new_trip.html', location=location, trip_name=new_trip.trip_name, 
-                                            weather_list=weather_list, occassions=occassions)
+                                            weather_list=weather_list, activities=activities,
+                                            outfits=outfits, num_location=num_location)
 
 
 @app.route('/create_list', methods=['GET'])
@@ -265,32 +266,50 @@ def create_list():
     """Create packing list for specified location."""
 
     # get info from html
-    num_outfits = request.args.get('num_outfits')
-    purpose = request.args.get('purpose')
-    formal = request.args.get('formal') 
+    num_formal = request.args.get('Formal')
+    num_casual = request.args.get('Casual')
+    num_active = request.args.get('Active')
+    num_going_out = request.args.get('Going Out')
+    num_nights = int(request.args.get('num_nights'))
+    flying = request.args.get('flying')
+    activities_list = request.args.getlist('purpose')
+
+    outfit_sum = (int(num_formal) + int(num_casual) + int(num_active) + int(num_going_out))
 
     # get info from session
     weather_list = session['weather_list']
     location = session['location']
     trip_name = session['trip_name']
+    trip_id = session['trip_id']
+    location = session['location']
 
     # create new suggeted list instance
-    new_list = SuggestedList(num_outfits, location, weather_list)
+    new_list = SuggestedList(location, weather_list, activities_list, num_nights, outfit_sum)
     
     # call suggested list methods
     passport = new_list.need_passport()
     sunglasses = new_list.need_sunglasses()
     jacket = new_list.need_jacket()
     umbrella = new_list.need_umbrella()
+    activities_items_list = new_list.activities()
+    misc_items = new_list.misc_items()
 
     # get categories from DB
     categories = db.session.query(Category.category_name).order_by(Category.category_name).all()
 
-    return render_template('create_list.html', num_outfits=num_outfits, 
-                                               purpose=purpose, formal=formal,
+    # get current list of trip items
+    trip_locations = db.session.query(LocationVisit.location_visit_id).join(Trip).filter_by(trip_name=trip_name).all()
+    items = db.session.query(Item.description, LocationVisitItem.location_visit_items_id, Location.location_name, Category.category_name).join(LocationVisitItem, LocationVisit, Category, Location).filter(LocationVisit.location_visit_id.in_(trip_locations)).all()
+
+
+    return render_template('create_list.html', location=location, flying=flying,
+                                               num_formal=num_formal, num_casual=num_casual,
+                                               num_active=num_active, num_going_out=num_going_out,
                                                passport=passport, sunglasses=sunglasses,
                                                jacket=jacket, umbrella=umbrella,
-                                               categories=categories, trip_name=trip_name)
+                                               categories=categories, trip_name=trip_name,
+                                               items=items, activities_items_list = activities_items_list,
+                                               misc_items=misc_items)
 
 
 @app.route('/create_list', methods=['POST'])
@@ -321,24 +340,28 @@ def add_item():
     else:
         location_visit_id = session['location_visit_id']
 
-    #create new location_visit_items instance
+    #create new location_visit_items instance and add to db.
     new_location_visit_item = LocationVisitItem(location_visit_id=location_visit_id, item_id=new_item.item_id)
 
     db.session.add(new_location_visit_item)
     db.session.commit()
 
+    # get new item id
     item_id = new_location_visit_item.location_visit_items_id
 
+    # get item details
     item_details = db.session.query(Item.description, Category.category_name).join(Category, LocationVisitItem).filter_by(location_visit_items_id=item_id).one()
-
 
     item_dict = {}
 
     item_dict['location_visit_items_id'] = item_id
     item_dict['category'] = item_details[1]
     item_dict['description'] = item_details[0]
-    item_dict['location'] = item_location
-
+    
+    if item_location:
+        item_dict['location'] = item_location
+    else: 
+        item_dict['location'] = session['location']
 
     return jsonify(item_dict)
 

@@ -23,21 +23,56 @@
 
 
     <h2> Let's create your packing list!<h2>
-    <h4> Anwer a few questions about your trip to 
-      {{ location[0] }}, {{ location[1] }}.
+    <h4> Answer a few questions about your trip to {{ location[0] }}, {{ location[1] }}.
     </h4>
-
+    
     <form action='/create_list' method=['GET']>
-      How many total outfits will you need? <input type='number' name='num_outfits'>
-      <div> Reasons for visiting {{ location[0] }}: 
-        {% for occassion in occassions %}
-        <input type='checkbox' name='purpose' value='{{ occassion }}'>{{ occassion }}
+
+      <div>
+        How many days will you be staying?
+        <input type='number' name='num_days' style="width: 25px">
+        How many nights will you be staying?
+        <input type='number' name='num_nights' style="width: 25px">
+      </div>
+
+      <div>
+        How many of the following outfits will you need? 
+        {% for outfit in outfits %}
+        {{ outfit }}: <input type='number' name='{{ outfit }}' style="width: 25px">
         {% endfor %}
-      <div>Will you need formal clothing? 
-      <input type='radio' name='formal' value='yes'>Yes
-      <input type='radio' name='formal' value='no'>No</div>
+      </div>
+
+      <div> What activities do you have planned for {{ location[0] }}?: 
+        {% for activity in activities %}
+        <input id='{{ activity[0] }}' type='checkbox' name='purpose' value='{{ activity }}'>{{ activity }}
+        {% endfor %}
+      </div>
+
+      {% if num_location|length == 1 %}
+      <div>Will you be flying on this trip? 
+      <input type='radio' name='flying' value='yes'>Yes
+      <input type='radio' name='flying' value='no'>No</div>
+      {% endif %}
+
+      <div id='survey'></div>
       <input type='submit' value='Create your list!'>
 
     </form>
+
+    <script> 
+
+    //   $( "#O" ).change(function(){
+    //     if($(this).is(":checked"));
+    //       console.log("it works!");
+    //       $('#survey').append('<p>Here are words.</p>');
+
+      // });
+
+    // $("#O").change( function(){
+    //   if( $(this).is(':checked') ) 
+    //     $('#survey').append("<input type='radio' name='skiing' value='yes'>Yes");
+    // });
+
+        </script>
 
 {% endblock %}

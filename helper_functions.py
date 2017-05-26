@@ -62,3 +62,13 @@ def get_location(location):
 
     return new_location
 
+
+def get_weather(weather_list, weather_high_avg, weather_low_avg):
+    """Add weather summary in db."""
+
+    new_weather = Weather(weather_summary_id=weather_list[2][1], temperature_high=(weather_high_avg / 3), 
+                              temperature_low=(weather_low_avg / 3))
+    db.session.add(new_weather)
+    db.session.commit()
+
+    return new_weather

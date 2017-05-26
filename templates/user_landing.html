@@ -4,6 +4,8 @@
 
 {% block content %}
 
+    <script src='https://code.jquery.com/jquery.js'></script>
+    <script type='text/javascript' src='/static/js/location.js'></script>
     <script type='text/javascript' src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAzyl6IGlGGmnVCqHiAluta6VfjuGf6Fec&libraries=places"></script>
 
     <h1>Create new trip</h1>
@@ -17,16 +19,10 @@
         <input type='text' name='location' id='autocomplete'>
     </label>
 
-        <script src='https://code.jquery.com/jquery.js'></script>
-        <script src='/static/js/location.js' type='text/javascript'></script>
     
         <input type='submit' id='submit_location'>
     </form>
 
-<!--     <form action='/core_list'>
-        <input type='submit' id='core-list' value='Your Core List'>
-    </form>
- -->
     <h1>Past Trips</h1>
         {% for trip in trips %}
         <a href='/packing_list/{{ trip[0] }}'>{{ trip[0] }}</a>
