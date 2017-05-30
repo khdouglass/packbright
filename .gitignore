@@ -2,4 +2,5 @@
 /env
 secrets.sh
 .DS_Store
-.coverage
+.coveragesendgrid.env
+sendgrid.env

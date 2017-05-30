@@ -8,11 +8,37 @@
         .weather {
             display: inline-block; 
         }
+        .strike {
+            text-decoration: line-through;
+        }
+          #image {
+              -webkit-filter: grayscale(100%);
+              filter: greyscale(100%);
+          }
+          
+          #title {
+              -webkit-filter: grayscale(100%);
+              filter: greyscale(100%);
+              width: 100%;
+              height: 400px;
+              background-image: url('{{ location_image_url }}');
+              background-size: cover;
+          }
+          
+          h1 {
+              color: white;
+              text-align: center;
+          }
+
+          h2 {
+              color: white;
+              text-align: center;
+          }
 
     </style>
 
+    <div id='title'> <h1>{{ location[0] }}</h1>
     <h2>{{ trip_name }}</h2>
-    <h1>{{ location[0] }}</h1>
 
     {% for item in session['weather_list'] %}
     <div class='weather'><img src='{{ item[4] }}'></div>
@@ -20,10 +46,13 @@
     {{ item[1] }}
     {{ item[2] }}°/{{ item[3] }}°
     {% endfor %}
+    </div>
 
-    <h1>Suggested Items</h1>
+    <h3>Your Packing List</h3>
 
-    <table id='suggested-items' class='tablesorter' style="width:50%">
+    <div class="container-fluid">
+    <div class="col-xs-12">
+    <table id='suggested-items' class='tablesorter'>
         <thead>
             <tr>
                 <th>Category</th>
@@ -99,31 +128,30 @@
         </tbody>  
     </table> 
 
-    <h1> Add Items</h1>
-
+    <h3>Create Outfits</h3>
     <table>
         <tr>
             {% if num_formal|int > 0 %}
             <td><div id='formal' class='outfits'>
-            Add {{ num_formal }} formal outfit(s)</div></td><td><input type="checkbox"></input></td>
+            {{ num_formal }} formal outfit(s)</div></td><td><input type="checkbox" class='done'></input></td>
         </tr>
             {% endif %}
         <tr>
             {% if num_casual|int > 0 %}
             <td><div id='casual' class='outfits'>
-            Add {{ num_casual }} casual outfit(s)</div></td><td><input type="checkbox"></input></td>
+            {{ num_casual }} casual outfit(s)</div></td><td><input type="checkbox" class='done'></input></td>
         </tr>
             {% endif %}
         <tr>
             {% if num_active|int > 0 %}
             <td><div id='active' class='outfits'>
-            Add {{ num_active }} active outfit(s)</div></td><td><input type="checkbox"></input></td>
+            {{ num_active }} active outfit(s)</div></td><td><input type="checkbox" class='done'></input></td>
         </tr>
             {% endif %}
         <tr>
             {% if num_going_out|int > 0 %}
             <td><div id='going-out' class='outfits'>
-            Add {{ num_going_out }} going out outfit(s)</div></td><td><input type="checkbox"></input></td>
+            {{ num_going_out }} going out outfit(s)</div></td><td><input type="checkbox" class='done'></input></td>
         </tr>
             {% endif %} 
     </table>
@@ -140,7 +168,7 @@
         <input type="Submit" value='Add Item'>
     </form>
     
-    <table id='packing-list' class='tablesorter' style="width:75%" >
+    <table id='packing-list' class='tablesorter'>
         <thead>
             <tr>
                 <td>Category</td>
@@ -160,6 +188,8 @@
         {% endfor %}            
         </tbody>  
     </table> 
+    </div>
+    </div>
 
     <form method='POST' action='/new_trip'>
         <div>
@@ -172,11 +202,16 @@
         Done packing for your {{ trip_name }} trip? <input type='submit' id='submit_location' value='See my list!'>
     </form>
 
-    <script type='text/javascript' src='/static/js/location.js' ></script>
+
+    <script type='text/javascript' src='/static/js/location.js'></script>
     <script type='text/javascript' src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAzyl6IGlGGmnVCqHiAluta6VfjuGf6Fec&libraries=places"></script>
     <script type='text/javascript' src='/static/js/add_remove_item.js'></script>
-
-
-
+    <script>
+        $('.done').change(function() {
+            if ($('.done').on('click') ) {
+                $(this).closest('tr').toggleClass('strike');
+            }
+        });
+    </script>
 
 {% endblock %}

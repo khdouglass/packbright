@@ -50,7 +50,7 @@ class Location(db.Model):
     def __repr__(self):
         """Provide helpful representation when printed."""
 
-        return "<Location location_id=%s location_name=%s>" % (self.location_id, self.city_name)
+        return "<Location location_id=%s location_name=%s>" % (self.location_id, self.location_name)
 
 
 class Image(db.Model):

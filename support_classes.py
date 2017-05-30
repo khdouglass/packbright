@@ -1,9 +1,9 @@
 class SuggestedList(object):
-    def __init__(self, location, weather_list, activities_list, num_nights, outfit_sum):
+    def __init__(self, location, weather_list, activities_list, num_days, outfit_sum):
         self.location = location
         self.weather_list = weather_list
         self.activities_list = activities_list
-        self.num_nights = num_nights
+        self.num_days = num_days
         self.outfit_sum = outfit_sum
     
     def activities(self):
@@ -17,8 +17,7 @@ class SuggestedList(object):
             items.extend([('Technology', 'Laptop'), ('Technology', 'Laptop Charger'), ('Suit', 'Suit'), 
                           ('Accessories', 'Work Bag/Briefcase')])
         if 'Working Out' in self.activities_list:
-            items.extend([('Activewear', 'Top'), ('Activewear', 'Bottoms'), ('Shoes', 'Work Out Shoes'),
-                          ('Socks', 'Athletic Socks')])
+            items.extend([('Shoes', 'Work Out Shoes'),('Socks', 'Athletic Socks')])
         if 'Hiking' in self.activities_list:
             items.extend([('Shoes', 'Hiking Shoes'), ('Socks', 'Hiking Socks'), ('Skin Care', 'Bug Spray'),
                           ('Skin Care', 'Sunscreen'), ('Accessories', 'Backpack')])
@@ -59,10 +58,8 @@ class SuggestedList(object):
 
     def misc_items(self):
         items = []
-        if self.num_nights:
+        if self.num_days:
             items.extend([('Sleepwear', 'Pajamas'), ('Technology', 'Cell Phone Charger')])
         items.extend([('Undergarments', self.outfit_sum)])
 
         return items
-
-

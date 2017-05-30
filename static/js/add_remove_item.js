@@ -38,6 +38,13 @@ function addSuggItem(evt) {
 
 $('.add').on('click', addSuggItem);
 
+$(document).on('click','.add',function(){
+    var id = $(this).closest('tr').attr("id");        
+    $.get('/remove_item', {item_id: id});    
+    $(this).closest("tr").remove();
+    console.log(id);
+    });
+
 $(document).on('click','.remove',function(){
     var id = $(this).closest('tr').attr("id");        
     $.get('/remove_item', {item_id: id});    
@@ -45,12 +52,13 @@ $(document).on('click','.remove',function(){
     console.log(id);
     });
 
-$(function(){
-  $('#packing-list').tablesorter();
-});
+// $(function(){
+//   $('#packing-list').tablesorter();
+// });
 
-$(function(){
-  $().tablesorter();
+$(document).ready(function() { 
+    $('#packing-list').tablesorter({ 
+    }); 
 });
 
 $(document).ready(function() { 
