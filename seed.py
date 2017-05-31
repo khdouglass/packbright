@@ -142,10 +142,9 @@ def load_categories():
     """Load categories into database."""
 
     categories = ['Jeans', 'Pants', 'Shorts', 'Skirts', 'Dress', 'Tank Top', 'Shirt',
-                  'Sweater', 'Turtleneck', 'Jacket', 'Shoes', 'Suit', 
+                  'Sweater', 'Jacket', 'Shoes', 'Suit', 'Travel Supplies', 'Accessories'
                   'Swimsuit','Socks', 'Undergarments', 'Jewelry', 'Belt', 'Scarf', 
-                  'Hair Products / Tools', 'Make Up', 'Tolietries', 'Technology',
-                  'Travel Supplies', 'Accessories']
+                  'Hair Products / Tools', 'Make Up', 'Tolietries', 'Technology']
 
     for category in categories:
         new_category = Category(category_name=category)

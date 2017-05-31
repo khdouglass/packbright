@@ -7,16 +7,16 @@
     <style>
       .weather {
           display: inline-block; 
+          color: white;
       }
 
-      #image {
+      #image {  
           -webkit-filter: grayscale(100%);
           filter: greyscale(100%);
       }
       
       #title {
-          -webkit-filter: grayscale(100%);
-          filter: greyscale(100%);
+
           width: 100%;
           height: 400px;
           background-image: url('{{ location_image_url }}');
@@ -35,11 +35,11 @@
 
     </style>
 
-    <div id='title'> <h1>{{ location[0] }}</h1>
+    <div id='title'> <h1>{{ location[0] }}, {{ location[1] }}</h1>
         <h2>{{ trip_name }}</h2>
 
     {% for item in weather_list %}
-    <div class='weather'><img src='{{ item[4] }}'></div>
+    <div id='weather' class='weather'><img src='{{ item[4] }}'></div>
     {{ item[0] }}
     {{ item[1] }}
     {{ item[2] }}°/{{ item[3] }}°
@@ -64,9 +64,12 @@
         {% endfor %}
       </div>
 
-      <div> What activities do you have planned for {{ location[0] }}?: 
+      What activities do you have planned for {{ location[0] }}?:
+      <div class='btn-group' data-toggle='buttons'>  
         {% for activity in activities %}
-        <input id='{{ activity[0] }}' type='checkbox' name='purpose' value='{{ activity }}'>{{ activity }}
+        <label class="btn btn-primary">
+        <input id='{{ activity[0] }}' type='checkbox' name='purpose' autocomplete='off'value='{{ activity }}'>{{ activity }}
+        </label>
         {% endfor %}
       </div>
 

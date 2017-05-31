@@ -2,6 +2,9 @@
 <html>
 <head>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/jquery.slick/1.6.0/slick.css"/>
+    <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/jquery.slick/1.6.0/slick-theme.css"/>
+
     <style>
         li {
             display: inline;
@@ -10,25 +13,23 @@
 
     <title>PACK APP NAME</title>
 
-    <script> console.log("hi")</script>
     <script type="text/javascript"></script>
     <script src='https://code.jquery.com/jquery.js'></script>
     <script type="text/javascript" src="https://mottie.github.io/tablesorter/dist/js/jquery.tablesorter.min.js">
     </script>
-    
-
 </head>
 
 <body>
-<ul>
+<nav class="navbar navbar-light bg-faded">
     {% if "user_id" in session %}
-    <li><a href="/logout">Logout</a></li>
-    <li><a href="/user_landing/{{ session['user_id'] }}">Home</a></li>
-    <li><a href="/core_list">Core List</a></li>
+    <a class="navbar-brand" href='/logout'>Logout</a>
+    <a class="navbar-brand" href="/user_landing/{{ session['user_id'] }}">Home</a>
+    <a class="navbar-brand" href="/core_list">Core List</a>
     {% else %}
-    <li><a href="/login">Login</a></li>
+    <a class="navbar-brand" href="/login">Login</a>
     {% endif %}
-</ul>
+</nav>
+
 
 {% for flash in get_flashed_messages() %}
   {{ flash }}
@@ -39,6 +40,9 @@
 {% endblock %}
 
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+<script type="text/javascript" src="//cdn.jsdelivr.net/jquery.slick/1.6.0/slick.min.js"></script>
+
 
 </body>
 </html>

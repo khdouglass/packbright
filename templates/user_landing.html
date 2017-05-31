@@ -3,12 +3,33 @@
 {% block title %}PACK MANAGER{% endblock %}
 
 {% block content %}
+    <style>
+    .image {
+        height: 300px;
+    }
+
+    .text {
+        color: red;
+        font-size: 30px
+        position: absolute;
+    }
+
+    .slick-prev:before, .slick-next:before { 
+        color:red !important;
+    }
+
+    .slick-slide {
+        margin: 0px 20px;
+    } 
+
+    </style>
 
     <script src='https://code.jquery.com/jquery.js'></script>
     <script type='text/javascript' src='/static/js/location.js'></script>
     <script type='text/javascript' src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAzyl6IGlGGmnVCqHiAluta6VfjuGf6Fec&libraries=places"></script>
+                
 
-    <h1>Create new trip</h1>
+    <h1>Create A New Trip</h1>
     <form method='POST' action='/new_trip'>
 
     <label>Trip Name: 
@@ -18,14 +39,29 @@
     <label>Location: 
         <input type='text' name='location' id='autocomplete'>
     </label>
-
-    
         <input type='submit' id='submit_location'>
     </form>
 
-    <h1>Past Trips</h1>
-        {% for trip in trips %}
-        <a href='/packing_list/{{ trip[0] }}'>{{ trip[0] }}</a>
+    <div class='past-trips'>
+        {% for trip in trip_info %}
+        <div class='image'><img src='{{ trip[0] }}'></div>
+        <div ><a class='text' href='/packing_list/{{ trip[1] }}'>{{ trip[1] }}</a></div>
         {% endfor %}
+    </div>
+
+    <script>
+        $(document).ready(function(){
+            $('.past-trips').slick({
+                dots: true,
+                infinite: true,
+                speed: 300,
+                slidesToShow: 4,
+                slidesToScroll: 2,
+                arrows: true,
+                variableWidth: true
+          });
+        });
+    </script>
+    
 
 {% endblock %}

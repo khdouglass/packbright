@@ -2,6 +2,9 @@
 
 console.log("HERE")
 
+/*
+hgggghghhg
+*/
 function displayItem(result) {
     console.log(result.location_visit_items_id);
     $('#packing-list tbody').append(
@@ -38,6 +41,8 @@ function addSuggItem(evt) {
 
 $('.add').on('click', addSuggItem);
 
+
+
 $(document).on('click','.add',function(){
     var id = $(this).closest('tr').attr("id");        
     $.get('/remove_item', {item_id: id});    
@@ -51,10 +56,6 @@ $(document).on('click','.remove',function(){
     $(this).closest("tr").remove();
     console.log(id);
     });
-
-// $(function(){
-//   $('#packing-list').tablesorter();
-// });
 
 $(document).ready(function() { 
     $('#packing-list').tablesorter({ 

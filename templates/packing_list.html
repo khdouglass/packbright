@@ -49,7 +49,7 @@
     </div>
     {% endfor %}
 
-    <table id='packing-list' class='tablesorter' style="width:50%" >
+    <table id='packing-list' class='tablesorter' style="width:50%">
         <thead>
             <tr>
                 <th>Category</th>
@@ -86,7 +86,8 @@
             {% endfor %}
         </select>
 
-        Item Description: <input type='text' id='item-description' name='description'>
+        Item Description: <input type='text' id='item-description' 
+        name='description'>
         
         Item Location: 
         <select id='item-location' name='location'>
@@ -98,10 +99,18 @@
         <input type="Submit" value='Add Item'>
     </form>
 
+    <form action='/send_email' id='send_email' method='POST'>
+        Email your packing list!
+        <input type='email' id='email' placeholder='email address'>
+        <input type='submit' value='Send'>
+    </form>
+
     <form action='/reset_trip'>
         <input type='submit' value='Start a new trip!'>
     </form>
 
     <script type='text/javascript' src='/static/js/add_remove_item.js'></script>
+    <script type='text/javascript' src='/static/js/send_email.js'></script>
+
 
 {% endblock %}

@@ -12,6 +12,7 @@ from model import (connect_to_db, db, User, Trip, Location, Image, LocationVisit
                    Item, Category)
 from support_classes import SuggestedList
 from flickr import get_location_image
+from sendgrid_send_email import email_packing_list
 
 app = Flask(__name__)
 
@@ -50,6 +51,12 @@ def register_process():
     email = request.form.get('email')
     password = request.form.get('password')
 
+    user_exists = db.session.query(User.user_id).filter_by(user_id=user_id, email=email).first()
+
+    if user_exists:
+        flash("User already exists!")
+        return redirect('/register')
+
     # create new user, add to db
     new_user = User(user_id=user_id, first_name=first_name, last_name=last_name, 
                     email=email, password=password)
@@ -86,7 +93,7 @@ def login():
     # set session to user_id
     session['user_id'] = user_id
 
-    return redirect('user_landing/' + user_id)
+    return redirect('/user_landing/' + user_id)
 
 
 @app.route('/logout')
@@ -102,14 +109,19 @@ def logout():
 def user_landing(user_id):
     """Display user landing page."""
 
-    # gtet user's trips to from db to display
-    trips = db.session.query(Trip.trip_name).filter_by(user_id=user_id).all()
+    # get user's trips to from db to display
+    trips = db.session.query(Location.location_name, Trip.trip_name).join(LocationVisit, Trip).filter_by(user_id=user_id).all()
+
+    trip_info = []
+    for trip in trips:
+        location_image_url = get_location_image(trip[0])
+        trip_info.append((location_image_url, trip[1]))
 
     # clear session for new trip
     if 'trip_name' in session:
         del session['trip_name']
 
-    return render_template('user_landing.html', trips=trips)
+    return render_template('user_landing.html', trip_info=trip_info)
 
 
 @app.route('/core_list')
@@ -120,7 +132,10 @@ def core_list():
     user_id = session['user_id'] 
 
     # get core list items and categories from db 
-    core_list = db.session.query(Item.description, Category.category_name, CoreListItem.core_list_item_id).join(CoreListItem, CoreList, Category).filter(CoreList.user_id==user_id).all()
+    core_list = db.session.query(Item.description, Category.category_name, CoreListItem.core_list_item_id)\
+                           .join(CoreListItem, CoreList, Category)\
+                           .filter(CoreList.user_id==user_id)\
+                           .all()
     categories = db.session.query(Category.category_name).order_by(Category.category_name).all()
 
 
@@ -198,7 +213,6 @@ def new_trip():
    
     # add location to database if not already in db, return object
     new_location = helper_functions.get_location(location)
-    print "******NEW LOCATION", new_location
 
     # format location to get weather information from wunderground api
     location = location.split(',')
@@ -268,7 +282,7 @@ def new_trip():
                                             location_image_url=location_image_url)
 
 
-@app.route('/create_list', methods=['GET'])
+@app.route('/create_list')
 def create_list():
     """Create packing list for specified location."""
 
@@ -390,7 +404,7 @@ def remove_item():
     return "Item deleted"
 
 
-@app.route('/packing_list/<trip_name>', methods=['GET'])
+@app.route('/packing_list/<trip_name>')
 def complete_list(trip_name):
     """Display complete packing list for trip."""
 
@@ -411,12 +425,43 @@ def complete_list(trip_name):
 
     # query db for trip items
     trip_locations = db.session.query(LocationVisit.location_visit_id).join(Trip).filter_by(trip_name=trip_name).all()
-    items = db.session.query(Item.description, LocationVisitItem.location_visit_items_id, Location.location_name, Category.category_name).join(LocationVisitItem, LocationVisit, Category, Location).filter(LocationVisit.location_visit_id.in_(trip_locations)).all()
-    core_list = db.session.query(Item.description, Category.category_name).join(CoreListItem, CoreList, Category).filter(CoreList.user_id==user_id).all()
+    items = db.session.query(Item.description, LocationVisitItem.location_visit_items_id, Location.location_name, Category.category_name)\
+                       .join(LocationVisitItem, LocationVisit, Category, Location)\
+                       .filter(LocationVisit.location_visit_id.in_(trip_locations))\
+                       .all()
+    core_list = db.session.query(Item.description, Category.category_name)\
+                           .join(CoreListItem, CoreList, Category)\
+                           .filter(CoreList.user_id==user_id).all()
 
     return render_template('packing_list.html', items=items, trip_name=trip_name, core_list=core_list, 
                                                 location_weather_list=location_weather_list, categories=categories,
                                                 location_list=location_list, image=image)
+
+@app.route('/send_email', methods=['POST'])
+def send_email():
+    """Send packing list in an email."""
+
+    # get user email and first name from db
+    user_id = session['user_id']
+    user_info = db.session.query(User.email, User.first_name).filter_by(user_id=user_id).one()
+
+    # get recipient email address from form 
+    recipient_email = request.form.get('email')
+
+    # get trip name from db
+    trip_id = session['trip_id']
+    trip_name = db.session.query(Trip.trip_name).filter_by(trip_id=trip_id).one()
+
+    trip_locations = db.session.query(LocationVisit.location_visit_id).join(Trip).filter_by(trip_name=trip_name).all()
+    items = db.session.query(Item.description, LocationVisitItem.location_visit_items_id, Location.location_name, Category.category_name).join(LocationVisitItem, LocationVisit, Category, Location).filter(LocationVisit.location_visit_id.in_(trip_locations)).all()
+    core_list = db.session.query(Item.description, Category.category_name).join(CoreListItem, CoreList, Category).filter(CoreList.user_id==user_id).all()
+
+    email_packing_list(user_info[0], recipient_email, user_info[1], trip_name[0], items, core_list)
+
+
+    flash('Email sent!')
+    return 'email sent'
+
 
 @app.route('/reset_trip')
 def reset_trip():

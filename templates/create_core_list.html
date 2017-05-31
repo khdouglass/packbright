@@ -4,7 +4,8 @@
 
 {% block content %}
 
-    <div>Core Packing List</div>    
+    <h2>Core Packing List</h2>    
+    <h4>These items will be automatically be added to all trip packing lists.</h4>
 
     <table id='core-list' class='tablesorter' style='width:50%'>
         <thead>
@@ -16,15 +17,13 @@
         <tbody>
             {% for item in core_list %}
             <tr id='{{ item[2] }}'>
-                <th>{{ item[1] }}</th>
-                <th>{{ item[0] }}</th>
-                <th><div class='remove'>X</div></th>
+                <td>{{ item[1] }}</td>
+                <td>{{ item[0] }}</td>
+                <td><div class='remove'>X</div></td>
             </tr>
             {% endfor %}
         </tbody> 
     </table> 
-
-    <p>These items will be automatically be added to all trip packing lists.</p>
 
     <form id='new-item' method='POST'>
         Item Category: 
