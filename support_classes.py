@@ -31,7 +31,7 @@ class SuggestedList(object):
         if 'Wedding / Special Event' in self.activities_list:
             items.extend([('Shoes', 'Formal Shoes'), ('Hair Products / Tools', ''), ('Make Up', '')])
         if 'Swimming' in self.activities_list:
-            items.extend([('Swimsuit', 'Swimsuit'), ('Skin Care', 'Sunscreen'), ('Sandals', 'Sandals')])
+            items.extend([('Swimsuit', 'Swimsuit'), ('Skin Care', 'Sunscreen'), ('Shoes', 'Sandals')])
 
         return items
 
@@ -39,27 +39,27 @@ class SuggestedList(object):
         if unicode(' United States') in self.location:
             return False
         else:
-            return True
+            return ('Travel Supplies', 'Passport')
 
     def need_sunglasses(self):
         for item in self.weather_list:
             if 'Clear' in item:
-                return True
+                return ('Accessories', 'Sunglasses')
 
     def need_jacket(self):
         for item in self.weather_list:
             if int(item[3]) < 55:
-                return True
+                return ('Jacket', '')
 
     def need_umbrella(self):
         for item in self.weather_list:
             if item[1] in ['Rain', 'Thunderstorms', 'Sleet', 'Chance of Rain']:
-                return True
+                return ('Accessories', 'Umbrella')
 
     def misc_items(self):
         items = []
         if self.num_days:
             items.extend([('Sleepwear', 'Pajamas'), ('Technology', 'Cell Phone Charger')])
-        items.extend([('Undergarments', self.outfit_sum)])
+        items.extend([('Undergarments', str(self.outfit_sum))])
 
         return items

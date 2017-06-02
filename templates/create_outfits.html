@@ -1,0 +1,267 @@
+{% extends 'base.html' %}
+
+{% block title %}PACK MANAGER{% endblock %}
+
+{% block content %}
+
+    <style>
+        .weather {
+            display: inline-block; 
+        }
+        .strike {
+            text-decoration: line-through;
+        }
+        #image {
+            -webkit-filter: grayscale(100%);
+            filter: greyscale(100%);
+          }
+          
+        #title {
+
+            width: 100%;
+            height: 400px;
+            background-image: url('{{ location_image_url }}');
+            background-size: cover;
+          }
+          
+          h1 {
+              color: white;
+              text-align: center;
+          }
+
+          h2 {
+              color: white;
+              text-align: center;
+          }
+
+          .new-outfit {
+            margin-left: auto;
+            margin-right: auto;
+            display: block;
+          }
+
+
+          .delete {
+            display: inline-block;
+          }
+
+    </style>
+    <div class="container-fluid">
+    <div id='title'> <h1>{{ location[0] }}</h1>
+    <h2>{{ trip_name }}</h2>
+
+    {% for item in session['weather_list'] %}
+    <div class='weather'><img src='{{ item[4] }}'></div>
+    {{ item[0] }}
+    {{ item[1] }}
+    {{ item[2] }}°/{{ item[3] }}°
+    {% endfor %}
+    </div>
+
+    <h3>Create Your Outfits</h3>
+    <h4>Complete your outfits by adding the items you want to pack.</h4>
+
+    {% for outfit in range(num_formal|int) %}
+        <div class='outfits'>
+        Formal outfit #{{ outfit + 1 }}
+        <form class='new-outfit' method='POST'>
+            <div>Category: 
+            <select class='shirt-category' name='category'>
+                <option value="Shirt">Shirt</option>
+                {% for category in categories %}
+                <option value='{{ category[0] }}'>{{ category[0] }}</option>
+                {% endfor %}
+            </select>
+            Description: <input type='text' class='shirt-description' name='description'>
+                <div class="delete">X</div></div>
+
+            <div>Category: 
+            <select class='pants-category' name='category'>
+                <option value="Pants">Pants</option>
+                {% for category in categories %}
+                <option value='{{ category[0] }}'>{{ category[0] }}</option>
+                {% endfor %}
+            </select>
+            Description: <input type='text' class='pants-description' name='description'>
+                <div class="delete">X</div></div>
+
+            <div>Category: 
+            <select class='shoes-category' name='category'>
+                <option value="Shoes">Shoes</option>
+                {% for category in categories %}
+                <option value='{{ category[0] }}'>{{ category[0] }}</option>
+                {% endfor %}
+            </select>
+            Description: <input type='text' class='shoes-description' name='description'>
+                <div class="delete">X</div></div>
+            <input type="Submit" value='Add Outfit'>
+        </form>
+    </div>
+    {% endfor %}
+
+    {% for outfit in range(num_casual|int) %}
+        <div class='outfits'>
+        Casual outfit #{{ outfit + 1 }}
+        <form class='new-outfit' method='POST'>
+            <div>Category: 
+            <select class='shirt-category' name='category'>
+                <option value="Shirt">Shirt</option>
+                {% for category in categories %}
+                <option value='{{ category[0] }}'>{{ category[0] }}</option>
+                {% endfor %}
+            </select>
+            Description: <input type='text' class='shirt-description' name='description'>
+                <div class="delete">X</div></div>
+
+            <div>Category: 
+            <select class='pants-category' name='category'>
+                <option value="Pants">Pants</option>
+                {% for category in categories %}
+                <option value='{{ category[0] }}'>{{ category[0] }}</option>
+                {% endfor %}
+            </select>
+            Description: <input type='text' class='pants-description' name='description'>
+                <div class="delete">X</div></div>
+
+            <div>Category: 
+            <select class='shoes-category' name='category'>
+                <option value="Shoes">Shoes</option>
+                {% for category in categories %}
+                <option value='{{ category[0] }}'>{{ category[0] }}</option>
+                {% endfor %}
+            </select>
+            Description: <input type='text' class='shoes-description' name='description'>
+                <div class="delete">X</div></div>
+            <input type="Submit" value='Add Outfit'>
+        </form>
+    </div>
+    {% endfor %}
+
+    {% for outfit in range(num_active|int) %}
+        <div class='outfits'>
+        Active outfit #{{ outfit + 1 }}
+        <form class='new-outfit' method='POST'>
+            <div>Category: 
+            <select class='shirt-category' name='category'>
+                <option value="Shirt">Shirt</option>
+                {% for category in categories %}
+                <option value='{{ category[0] }}'>{{ category[0] }}</option>
+                {% endfor %}
+            </select>
+            Description: <input type='text' class='shirt-description' name='description'>
+                <div class="delete">X</div></div>
+
+            <div>Category: 
+            <select class='pants-category' name='category'>
+                <option value="Pants">Pants</option>
+                {% for category in categories %}
+                <option value='{{ category[0] }}'>{{ category[0] }}</option>
+                {% endfor %}
+            </select>
+            Description: <input type='text' class='pants-description' name='description'>
+                <div class="delete">X</div></div>
+
+            <div>Category: 
+            <select class='shoes-category' name='category'>
+                <option value="Shoes">Shoes</option>
+                {% for category in categories %}
+                <option value='{{ category[0] }}'>{{ category[0] }}</option>
+                {% endfor %}
+            </select>
+            Description: <input type='text' class='shoes-description' name='description'>
+                <div class="delete">X</div></div>
+            <input type="Submit" value='Add Outfit'>
+        </form>
+    </div>
+    {% endfor %}
+
+    {% for outfit in range(num_going_out|int) %}
+        <div class='outfits'>
+        Going Out outfit #{{ outfit + 1 }}
+        <form class='new-outfit' method='POST'>
+            <div>Category: 
+            <select class='shirt-category' name='category'>
+                <option value="Shirt">Shirt</option>
+                {% for category in categories %}
+                <option value='{{ category[0] }}'>{{ category[0] }}</option>
+                {% endfor %}
+            </select>
+            Description: <input type='text' class='shirt-description' name='description'>
+                <div class="delete">X</div></div>
+
+            <div>Category: 
+            <select class='pants-category' name='category'>
+                <option value="Pants">Pants</option>
+                {% for category in categories %}
+                <option value='{{ category[0] }}'>{{ category[0] }}</option>
+                {% endfor %}
+            </select>
+            Description: <input type='text' class='pants-description' name='description'>
+                <div class="delete">X</div></div>
+
+            <div>Category: 
+            <select class='shoes-category' name='category'>
+                <option value="Shoes">Shoes</option>
+                {% for category in categories %}
+                <option value='{{ category[0] }}'>{{ category[0] }}</option>
+                {% endfor %}
+            </select>
+            Description: <input type='text' class='shoes-description' name='description'>
+                <div class="delete">X</div></div>
+            <input type="Submit" value='Add Outfit'>
+        </form>
+    </div>
+    {% endfor %}
+
+    Missing an item or outfit? Add them here!
+    <form id='new-item' method='POST'>
+        Category: 
+        <select id='item-category' name='category'>
+            <option value="" disabled selected>Choose One</option>
+            {% for category in categories %}
+            <option value='{{ category[0] }}'>{{ category[0] }}</option>
+            {% endfor %}
+        </select>
+        Description: <input type='text' id='item-description' name='description'>
+        <input type="Submit" value='Add Item'>
+    </form>
+
+    <table id='packing-list' class='tablesorter' style="width:30%">
+        <thead>
+            <tr>
+                <th>Category</th>
+                <th>Item</th>
+                <th>Location</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>            
+        </tbody>  
+    </table> 
+
+    <form method='POST' action='/new_trip'>
+        <div>
+            Add another location to your trip: <input type='text' name='location' id='autocomplete'>
+            <input type='submit' id='submit_location' value='Go!'>
+        </div>
+    </form>
+
+    <form action='/packing_list/{{trip_name}}'>
+        <input type='submit' id='submit_location' value='Show Me My Packing List!'>
+    </form>
+</div>
+
+
+    <script type='text/javascript' src='/static/js/location.js'></script>
+    <script type='text/javascript' src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAzyl6IGlGGmnVCqHiAluta6VfjuGf6Fec&libraries=places"></script>
+    <script type='text/javascript' src='/static/js/add_remove_item.js'></script>
+    
+    <script>
+        // $('.done').change(function() {
+        //     if ($('.done').on('click') ) {
+        //         $(this).closest('tr').toggleClass('strike');
+        //     }
+        // });
+    </script>
+
+{% endblock %}

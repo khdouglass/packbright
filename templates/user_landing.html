@@ -1,26 +1,44 @@
 {% extends 'base.html' %}
 
-{% block title %}PACK MANAGER{% endblock %}
+{% block title %}Packbright{% endblock %}
 
 {% block content %}
     <style>
-    .image {
-        height: 300px;
-    }
 
-    .text {
-        color: red;
-        font-size: 30px
-        position: absolute;
+    .image {
+        height: 100%;
+        width: 200px;
     }
 
     .slick-prev:before, .slick-next:before { 
-        color:red !important;
+        color: gray;
     }
 
     .slick-slide {
         margin: 0px 20px;
     } 
+
+    #past-trips {
+        position: fixed; 
+        bottom: 0;
+    }
+
+    .container {        
+        vertical-align: middle;
+        display: table-cell;
+        padding-top: 75px;
+    }
+
+    .header {
+        padding: 10px;
+    }
+
+/*    body {
+        background-image: url(/../static/img/background.jpeg);
+        background-size: 100%;
+        -webkit-filter: grayscale(100%);
+        filter: greyscale(100%);
+    }*/
 
     </style>
 
@@ -28,37 +46,52 @@
     <script type='text/javascript' src='/static/js/location.js'></script>
     <script type='text/javascript' src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAzyl6IGlGGmnVCqHiAluta6VfjuGf6Fec&libraries=places"></script>
                 
+    <div class='container text-center'>
+        <div class='header'>
+            <h1>Create A New Trip</h1>
+        </div>
 
-    <h1>Create A New Trip</h1>
-    <form method='POST' action='/new_trip'>
+        <form method='POST' action='/new_trip'>   
+            <div class='form-group'>
+                <label>Trip Name: 
+                    <input type='text' name='trip_name'>
+                </label>
+            </div>
+                
+            <div class='form-group'>
+                <label>Location: 
+                    <input type='text' name='location' id='autocomplete'>
+                </label>
+            </div>
 
-    <label>Trip Name: 
-        <input type='text' name='trip_name'>
-    </label>
-    
-    <label>Location: 
-        <input type='text' name='location' id='autocomplete'>
-    </label>
-        <input type='submit' id='submit_location'>
-    </form>
+            <div>
+                <input id='submit_location' class="btn btn-default" type="submit" value="Submit">
+            </div>
+        </form>
+</div>
 
-    <div class='past-trips'>
+    <div id='past-trips' class='container'>
         {% for trip in trip_info %}
-        <div class='image'><img src='{{ trip[0] }}'></div>
-        <div ><a class='text' href='/packing_list/{{ trip[1] }}'>{{ trip[1] }}</a></div>
+        <a href='/packing_list/{{ trip[1] }}'>
+            <img class='image' alt='{{ trip[1] }}'src='{{ trip[0] }}'>
+            </img>
+            <p>{{ trip[1] }}</p>
+        </a>
         {% endfor %}
     </div>
 
+
     <script>
         $(document).ready(function(){
-            $('.past-trips').slick({
+            $('#past-trips').slick({
                 dots: true,
                 infinite: true,
-                speed: 300,
+                speed: 500,
                 slidesToShow: 4,
                 slidesToScroll: 2,
                 arrows: true,
-                variableWidth: true
+                autoplay: true,
+                variableWidth: true    
           });
         });
     </script>

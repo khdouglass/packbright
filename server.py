@@ -281,10 +281,62 @@ def new_trip():
                                             outfits=outfits, num_location=num_location,
                                             location_image_url=location_image_url)
 
+# @app.route('/create_list')
+# def create_list():
+#     """Create outfits list for specified location."""
 
-@app.route('/create_list')
-def create_list():
-    """Create packing list for specified location."""
+#     # get info from html
+#     num_formal = int(request.args.get('Formal'))
+#     num_casual = int(request.args.get('Casual'))
+#     num_active = int(request.args.get('Active'))
+#     num_going_out = int(request.args.get('Going Out'))
+#     num_days = request.args.get('num_days') 
+#     flying = request.args.get('flying')
+#     activities_list = request.args.getlist('purpose')
+
+#     outfit_sum = (num_formal + num_casual + num_active + num_going_out)
+
+#     # get info from session
+#     weather_list = session['weather_list']
+#     location = session['location']
+#     trip_name = session['trip_name']
+#     trip_id = session['trip_id']
+#     location = session['location']
+
+#     # create new suggeted list instance
+#     new_list = SuggestedList(location, weather_list, activities_list, num_days, outfit_sum)
+    
+#     # call suggested list methods
+#     passport = new_list.need_passport()
+#     sunglasses = new_list.need_sunglasses()
+#     jacket = new_list.need_jacket() 
+#     umbrella = new_list.need_umbrella()
+#     activities_items_list = list(set(new_list.activities()))
+#     misc_items = new_list.misc_items()
+
+#     # get categories from DB
+#     categories = db.session.query(Category.category_name).order_by(Category.category_name).all()
+
+#     location_image_url = get_location_image(location[0])
+
+#     # get current list of trip items
+#     trip_locations = db.session.query(LocationVisit.location_visit_id).join(Trip).filter_by(trip_name=trip_name).all()
+#     items = db.session.query(Item.description, LocationVisitItem.location_visit_items_id, Location.location_name, Category.category_name).join(LocationVisitItem, LocationVisit, Category, Location).filter(LocationVisit.location_visit_id.in_(trip_locations)).all()
+
+#     return render_template('create_list.html', location=location, flying=flying,
+#                                                num_formal=num_formal, num_casual=num_casual,
+#                                                num_active=num_active, num_going_out=num_going_out,
+#                                                passport=passport, sunglasses=sunglasses,
+#                                                jacket=jacket, umbrella=umbrella,
+#                                                categories=categories, trip_name=trip_name,
+#                                                items=items, activities_items_list = activities_items_list,
+#                                                misc_items=misc_items, location_image_url=location_image_url)
+
+
+
+@app.route('/create_outfits')
+def create_outfits():
+    """Create outfits list for specified location."""
 
     # get info from html
     num_formal = int(request.args.get('Formal'))
@@ -303,6 +355,8 @@ def create_list():
     trip_name = session['trip_name']
     trip_id = session['trip_id']
     location = session['location']
+    location_visit_id = session['location_visit_id']
+
 
     # create new suggeted list instance
     new_list = SuggestedList(location, weather_list, activities_list, num_days, outfit_sum)
@@ -314,6 +368,18 @@ def create_list():
     umbrella = new_list.need_umbrella()
     activities_items_list = list(set(new_list.activities()))
     misc_items = new_list.misc_items()
+    suggested_items = [passport, sunglasses, jacket, umbrella]
+    suggested_items.extend(activities_items_list)
+    suggested_items.extend(misc_items)
+
+    for item in suggested_items:
+        print item
+        if item:
+            new_item = helper_functions.get_new_item(item[0], item[1])
+            new_location_visit_item = LocationVisitItem(location_visit_id=location_visit_id, item_id=new_item.item_id)
+            db.session.add(new_location_visit_item)
+            print "ADDED"
+    db.session.commit()
 
     # get categories from DB
     categories = db.session.query(Category.category_name).order_by(Category.category_name).all()
@@ -321,22 +387,63 @@ def create_list():
     location_image_url = get_location_image(location[0])
 
     # get current list of trip items
-    trip_locations = db.session.query(LocationVisit.location_visit_id).join(Trip).filter_by(trip_name=trip_name).all()
-    items = db.session.query(Item.description, LocationVisitItem.location_visit_items_id, Location.location_name, Category.category_name).join(LocationVisitItem, LocationVisit, Category, Location).filter(LocationVisit.location_visit_id.in_(trip_locations)).all()
+    # trip_locations = db.session.query(LocationVisit.location_visit_id).join(Trip).filter_by(trip_name=trip_name).all()
+    # items = db.session.query(Item.description, LocationVisitItem.location_visit_items_id, Location.location_name, Category.category_name).join(LocationVisitItem, LocationVisit, Category, Location).filter(LocationVisit.location_visit_id.in_(trip_locations)).all()
 
-    return render_template('create_list.html', location=location, flying=flying,
+    return render_template('create_outfits.html', location=location, location_image_url=location_image_url,
                                                num_formal=num_formal, num_casual=num_casual,
                                                num_active=num_active, num_going_out=num_going_out,
-                                               passport=passport, sunglasses=sunglasses,
-                                               jacket=jacket, umbrella=umbrella,
-                                               categories=categories, trip_name=trip_name,
-                                               items=items, activities_items_list = activities_items_list,
-                                               misc_items=misc_items, location_image_url=location_image_url)
+                                               categories=categories, trip_name=trip_name)
 
 
-@app.route('/create_list', methods=['POST'])
-def add_item():
+@app.route('/create_outfits', methods=['POST'])
+def add_outfit():
     """Add item for location visit to database."""
+
+    # get user input from html
+    shirt_category = request.form.get('shirt-category')
+    shirt_description = request.form.get('shirt-description')
+    pants_category = request.form.get('pants-category')
+    pants_description = request.form.get('pants-description')
+    shoes_category = request.form.get('shoes-category')
+    shoes_description = request.form.get('shoes-description')
+    item_location = request.form.get('location')
+
+    outfits = [(shirt_category, shirt_description), (pants_category, pants_description), 
+              (shoes_category, shoes_description)]
+
+    for item in outfits:
+        # query db for id associated with item_category
+        category_id = db.session.query(Category.category_id).filter_by(category_name=item[0]).one()
+
+        # query db for item matching category and description from user
+        new_item = db.session.query(Item).filter_by(category_id=category_id, description=item[1]).first()
+
+        # create new item if not in db
+        if new_item is None:
+            new_item = helper_functions.get_new_item(item[0], item[1])
+
+        # if this is an additional item added to a completed trip list
+        if item_location:
+            trip_id = session['trip_id']
+            # get location_id and location_visit_id from db using trip_id
+            location_id = db.session.query(Location.location_id).filter_by(location_name=item_location)
+            location_visit_id = db.session.query(LocationVisit.location_visit_id).filter_by(location_id=location_id, trip_id=trip_id).one()
+        else:
+            location_visit_id = session['location_visit_id']
+
+        #create new location_visit_items instance and add to db.
+        new_location_visit_item = LocationVisitItem(location_visit_id=location_visit_id, item_id=new_item.item_id)
+
+        db.session.add(new_location_visit_item)
+    
+    db.session.commit()
+
+    return "Outfit Added"
+
+@app.route("/add_item", methods=['POST'])
+def add_item():
+    """Add item to a location visit list."""
 
     # get user input from html
     item_category = request.form.get('category')

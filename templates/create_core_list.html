@@ -3,7 +3,7 @@
 {% block title %}PACK MANAGER{% endblock %}
 
 {% block content %}
-
+<div class="container-fluid">
     <h2>Core Packing List</h2>    
     <h4>These items will be automatically be added to all trip packing lists.</h4>
 
@@ -40,6 +40,7 @@
     <form action='/user_landing/{{ session["user_id"] }}'>
         <input type='submit' value='Core list finished!'>
     </form>
+</div>
 
     <script src='https://code.jquery.com/jquery.js'></script>    
     <script type="text/javascript" src="https://mottie.github.io/tablesorter/dist/js/jquery.tablesorter.min.js"></script>

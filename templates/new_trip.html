@@ -7,76 +7,140 @@
     <style>
       .weather {
           display: inline-block; 
-          color: white;
+          color: black;
       }
 
-      #image {  
+      .image {
           -webkit-filter: grayscale(100%);
           filter: greyscale(100%);
-      }
-      
-      #title {
-
           width: 100%;
-          height: 400px;
+          height: 300px;
           background-image: url('{{ location_image_url }}');
           background-size: cover;
+          background-position: center;
+          position: relative;
+
       }
       
-      h1 {
+      .title {
+          position: absolute;
           color: white;
-          text-align: center;
+          font-size: 44px;
+          background-color: rgba(0,0,0,0.5);
+          opacity: 10;
+          z-index: 0;
+          top: 30%;
+          left: 0;
       }
 
-      h2 {
-          color: white;
-          text-align: center;
+      #trip {
+          font-weight: bold
       }
 
+      #location {
+          font-size: 30px;
+      }
+
+      #weather {
+          display: inline-block;
+
+      }
+
+      .weather {
+          float: right;
+          padding-right: 30px;
+          padding-top: 10px;
+      }
+
+      .header {
+          font-size: 30px;
+          padding-top: 20px;
+          padding-bottom: 10px;
+          color: black;
+      }
+
+      .survey {
+        font-size: 16px;
+        padding-bottom: 8px;
+      }
+
+      .btn-group {
+        right-padding: 5px;
+        padding-top: 5px;
+        padding-bottom: 5px;
+      }
+
+      .buttons {
+        width: 600px;
+      }
+
+      #ex6SliderVal .slider-selection {
+        background: #BABABA;
+      }
+
+      #ex6SliderVal {
+        padding-left: 10px;
+      }
+
+      #ex6CurrentSliderValLabel {
+        padding-left: 4px;
+      }
     </style>
 
-    <div id='title'> <h1>{{ location[0] }}, {{ location[1] }}</h1>
-        <h2>{{ trip_name }}</h2>
-
-    {% for item in weather_list %}
-    <div id='weather' class='weather'><img src='{{ item[4] }}'></div>
-    {{ item[0] }}
-    {{ item[1] }}
-    {{ item[2] }}°/{{ item[3] }}°
-    {% endfor %}
+  <div class="container">
+    <div class='image'>
+    <div class='title text-center'>
+      <div id='trip'>{{ location[0] }}, {{ location[1] }}</div>
+      <div id='location'>{{ trip_name }}</div>
     </div>
+        </div>
 
-    <h2> Let's create your packing list!<h2>
-    <h4> Tell us about your trip to {{ location[0] }}, {{ location[1] }}.
-    </h4>
+    <div class='weather'>
+    {% for item in weather_list %}
+    <div id='weather' class='weather text-center'>
+      <img src='{{ item[4] }}'>
+      <div>{{ item[0] }}</div>
+      <div>{{ item[1] }}</div>
+      <div>{{ item[2] }}°/{{ item[3] }}°</div>
+    </div>
+    {% endfor %}
+  </div>
 
-    <form action='/create_list' method=['GET']>
+    <div class='header'> Tell us about your time in {{ location[0] }}, {{ location[1] }}.</div>
 
-      <div>
-        How many days will you be staying?
-        <input type='number' name='num_days' style="width: 50px">
+    <form action='/create_outfits' method=['POST']>
+      <div class='survey'>
+        How long will you be staying?
+        <input id="ex6" type="text" data-slider-min="0" data-slider-max="20" data-slider-step="1" data-slider-value="2"/>
+        <span id="ex6SliderVal">3 </span><span id="ex6CurrentSliderValLabel">days </span>
       </div>
 
-      <div>
-        How many of the following outfits will you need? 
+      <div class='survey'>
+        How many of the following outfits will you need? </div>
         {% for outfit in outfits %}
-        {{ outfit }}: <input type='number' name='{{ outfit }}' style='width: 50px' value='0'>
+        <div class='survey'><input type='number' name='{{ outfit }}' style='width: 50px' value='0'>
+        {{ outfit }}
         {% endfor %}
       </div>
 
-      What activities do you have planned for {{ location[0] }}?:
-      <div class='btn-group' data-toggle='buttons'>  
-        {% for activity in activities %}
-        <label class="btn btn-primary">
+    <div class='survey'> What activities do you have planned for {{ location[0] }}?
+     <div class='buttons'>
+     {% for activity in activities %}
+      <div class='btn-group ' data-toggle='buttons'>  
+        <label class="btn btn-info">
         <input id='{{ activity[0] }}' type='checkbox' name='purpose' autocomplete='off'value='{{ activity }}'>{{ activity }}
         </label>
+      </div>
         {% endfor %}
       </div>
+    </div>
 
       {% if num_location|length == 1 %}
-      <div>Will you be flying on this trip? 
+      <div class='survey'>
+      Will you be flying on this trip? 
       <input type='radio' name='flying' value='yes'>Yes
-      <input type='radio' name='flying' value='no'>No</div>
+      <input type='radio' name='flying' value='no'>No
+      </div>
       {% endif %}
 
       <div id='survey'></div>
@@ -84,6 +148,16 @@
 
       <img id='images'><img>
     </form>
+  </div>
+
+  <script>
+
+    $("#ex6").slider();
+    $("#ex6").on("slide", function(slideEvt) {
+      $("#ex6SliderVal").text(slideEvt.value);
+    });
+
+  </script>
 
 
 {% endblock %}

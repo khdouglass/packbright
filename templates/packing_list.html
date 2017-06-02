@@ -15,8 +15,6 @@
         }
 
         #title {
-            -webkit-filter: grayscale(100%);
-            filter: greyscale(100%);
             width: 100%;
             height: 400px;
             background-image: url('{{ image }}');
@@ -35,6 +33,7 @@
 
     </style>
 
+    <div class="container-fluid">
     <div id='title'> <h1>{{ trip_name }}</h1>
 
     {% for item in location_weather_list %}
@@ -108,6 +107,7 @@
     <form action='/reset_trip'>
         <input type='submit' value='Start a new trip!'>
     </form>
+</div>
 
     <script type='text/javascript' src='/static/js/add_remove_item.js'></script>
     <script type='text/javascript' src='/static/js/send_email.js'></script>

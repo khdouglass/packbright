@@ -5,6 +5,29 @@ console.log("HERE")
 /*
 hgggghghhg
 */
+function addOutfit(evt) {
+    evt.preventDefault();
+    console.log('SUBMIT');
+
+    var formInputs = {
+        "shirt-category": $($(this).find('.shirt-category')[0]).val(),
+        "shirt-description": $($(this).find('.shirt-description')[0]).val(),
+        "pants-category": $($(this).find('.pants-category')[0]).val(),
+        "pants-description": $($(this).find('.pants-description')[0]).val(),
+        "shoes-category": $($(this).find('.shoes-category')[0]).val(),
+        "shoes-description": $($(this).find('.shoes-description')[0]).val(),
+        "location": $('.item-location').val()
+    };
+    console.log(formInputs);
+    console.log(this);
+
+    $.post("/create_outfits", formInputs);
+    $(".item-description").val("");
+}
+
+$('.new-outfit').on('submit', addOutfit);
+
+
 function displayItem(result) {
     console.log(result.location_visit_items_id);
     $('#packing-list tbody').append(
@@ -21,7 +44,7 @@ function addItem(evt) {
         "location": $('#item-location').val()
     };
 
-    $.post("/create_list", formInputs, displayItem);
+    $.post("/add_item", formInputs, displayItem);
     $("#item-description").val("");
 }
 
@@ -29,7 +52,6 @@ $('#new-item').on('submit', addItem);
 
 function addSuggItem(evt) {
     evt.preventDefault();
-    // debugger;
     var row = $(this).closest("tr");
     var formInputs = {
         "category": row.children('td.sugg-item-category')[0].innerHTML,
@@ -41,20 +63,23 @@ function addSuggItem(evt) {
 
 $('.add').on('click', addSuggItem);
 
-
-
-$(document).on('click','.add',function(){
-    var id = $(this).closest('tr').attr("id");        
-    $.get('/remove_item', {item_id: id});    
-    $(this).closest("tr").remove();
-    console.log(id);
-    });
+// $(document).on('click','.add',function(){
+//     var id = $(this).closest('tr').attr("id");        
+//     $.get('/remove_item', {item_id: id});    
+//     $(this).closest("tr").remove();
+//     console.log(id);
+//     });
 
 $(document).on('click','.remove',function(){
     var id = $(this).closest('tr').attr("id");        
     $.get('/remove_item', {item_id: id});    
     $(this).closest("tr").remove();
     console.log(id);
+    });
+
+$(document).on('click','.delete',function(){
+    // debugger;       
+    $(this.parentElement).remove();
     });
 
 $(document).ready(function() { 
