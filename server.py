@@ -353,7 +353,6 @@ def create_outfits():
     weather_list = session['weather_list']
     location = session['location']
     trip_name = session['trip_name']
-    trip_id = session['trip_id']
     location = session['location']
     location_visit_id = session['location_visit_id']
 
@@ -413,6 +412,7 @@ def add_outfit():
               (shoes_category, shoes_description)]
 
     for item in outfits:
+        print '***ITEM', item
         # query db for id associated with item_category
         category_id = db.session.query(Category.category_id).filter_by(category_name=item[0]).one()
 
@@ -528,7 +528,7 @@ def complete_list(trip_name):
     # query db for location weather
     location_weather_list = db.session.query(Location.location_name, Weather.temperature_high, Weather.temperature_low, WeatherSummary.icon_url).outerjoin(LocationVisit, Weather, WeatherSummary).filter(LocationVisit.trip_id==trip_id).all()
 
-    image = get_location_image(location_list[0])
+    location_image_url = get_location_image(location_list[0])
 
     # query db for trip items
     trip_locations = db.session.query(LocationVisit.location_visit_id).join(Trip).filter_by(trip_name=trip_name).all()
@@ -542,7 +542,7 @@ def complete_list(trip_name):
 
     return render_template('packing_list.html', items=items, trip_name=trip_name, core_list=core_list, 
                                                 location_weather_list=location_weather_list, categories=categories,
-                                                location_list=location_list, image=image)
+                                                location_list=location_list, location_image_url=location_image_url)
 
 @app.route('/send_email', methods=['POST'])
 def send_email():

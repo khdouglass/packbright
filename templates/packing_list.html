@@ -6,19 +6,38 @@
 
     <style>
         .weather {
-            display: inline-block; 
-        }
-      
-        #image {
-            -webkit-filter: grayscale(100%);
-            filter: greyscale(100%);
+          display: inline-block; 
+          color: black;
+          float: right;
+          padding-right: 50px;
+          padding-top: 10px;
         }
 
-        #title {
+        #weather {
+            display: inline-block;
+
+        }
+      
+        .image {
+            -webkit-filter: grayscale(100%);
+            filter: greyscale(100%);
             width: 100%;
-            height: 400px;
-            background-image: url('{{ image }}');
+            height: 300px;
+            background-image: url('{{ location_image_url }}');
             background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+      
+        .title {
+            position: absolute;
+            color: white;
+            font-size: 44px;
+            background-color: rgba(0,0,0,0.5);
+            opacity: 10;
+            z-index: 0;
+            top: 30%;
+            left: 0;
         }
           
         h1 {
@@ -34,19 +53,26 @@
     </style>
 
     <div class="container-fluid">
-    <div id='title'> <h1>{{ trip_name }}</h1>
+        <div class='image'>
+        <div class='title text-center'>
+        <div id='trip'>{{ trip_name }}</div>
+        </div>
+    </div>
 
+    <div class='weather'>
     {% for item in location_weather_list %}
+    <div id='weather' class='weather text-center'>
     {% if item[1] %}
-        <div class='weather'><img src='{{ item[3] }}'>
-        {{ item[1] }}°/{{ item[2] }}°
-        {{ item[0] }}
+        <img src='{{ item[3] }}'>
+        <div>{{ item[1] }}°/{{ item[2] }}°</div>
+        <div>{{ item[0] }}</div>
+    </div>
     {% else %}
-        {{ item[0] }}
+        <div>{{ item[0] }}</div>
+    </div>
     {% endif %}
-    </div>
-    </div>
     {% endfor %}
+    </div>
 
     <table id='packing-list' class='tablesorter' style="width:50%">
         <thead>
@@ -107,6 +133,7 @@
     <form action='/reset_trip'>
         <input type='submit' value='Start a new trip!'>
     </form>
+    </div>
 </div>
 
     <script type='text/javascript' src='/static/js/add_remove_item.js'></script>

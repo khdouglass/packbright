@@ -22,7 +22,8 @@ function addOutfit(evt) {
     console.log(this);
 
     $.post("/create_outfits", formInputs);
-    $(".item-description").val("");
+    $(this).children().fadeTo("fast", 0.4);
+    $(this.parentElement).find('.added-response').css("display", "inline-block");
 }
 
 $('.new-outfit').on('submit', addOutfit);
@@ -70,6 +71,7 @@ $('.add').on('click', addSuggItem);
 //     console.log(id);
 //     });
 
+
 $(document).on('click','.remove',function(){
     var id = $(this).closest('tr').attr("id");        
     $.get('/remove_item', {item_id: id});    
@@ -81,6 +83,7 @@ $(document).on('click','.delete',function(){
     // debugger;       
     $(this.parentElement).remove();
     });
+
 
 $(document).ready(function() { 
     $('#packing-list').tablesorter({ 

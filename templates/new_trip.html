@@ -8,6 +8,13 @@
       .weather {
           display: inline-block; 
           color: black;
+          float: right;
+          padding-right: 30px;
+          padding-top: 10px;
+      }
+      
+      #weather {
+          display: inline-block;
       }
 
       .image {
@@ -19,7 +26,6 @@
           background-size: cover;
           background-position: center;
           position: relative;
-
       }
       
       .title {
@@ -41,33 +47,26 @@
           font-size: 30px;
       }
 
-      #weather {
-          display: inline-block;
-
-      }
-
-      .weather {
-          float: right;
-          padding-right: 30px;
-          padding-top: 10px;
-      }
-
       .header {
           font-size: 30px;
           padding-top: 20px;
           padding-bottom: 10px;
           color: black;
+
       }
 
       .survey {
         font-size: 16px;
         padding-bottom: 8px;
+
+
       }
 
       .btn-group {
         right-padding: 5px;
         padding-top: 5px;
         padding-bottom: 5px;
+
       }
 
       .buttons {
@@ -85,15 +84,16 @@
       #ex6CurrentSliderValLabel {
         padding-left: 4px;
       }
+
     </style>
 
-  <div class="container">
+  <div class="container-fluid">
     <div class='image'>
     <div class='title text-center'>
       <div id='trip'>{{ location[0] }}, {{ location[1] }}</div>
       <div id='location'>{{ trip_name }}</div>
     </div>
-        </div>
+    </div>
 
     <div class='weather'>
     {% for item in weather_list %}
@@ -104,15 +104,15 @@
       <div>{{ item[2] }}°/{{ item[3] }}°</div>
     </div>
     {% endfor %}
-  </div>
+    </div>
 
-    <div class='header'> Tell us about your time in {{ location[0] }}, {{ location[1] }}.</div>
+    <div class='header'> Tell us about your time in {{ location[0] }}.</div>
 
     <form action='/create_outfits' method=['POST']>
       <div class='survey'>
-        How long will you be staying?
+        <div>How long will you be staying?</div>
         <input id="ex6" type="text" data-slider-min="0" data-slider-max="20" data-slider-step="1" data-slider-value="2"/>
-        <span id="ex6SliderVal">3 </span><span id="ex6CurrentSliderValLabel">days </span>
+        <span id="ex6SliderVal">2</span><span id="ex6CurrentSliderValLabel">days </span>
       </div>
 
       <div class='survey'>
@@ -145,10 +145,10 @@
 
       <div id='survey'></div>
       <input type='submit' value='Create your list!'>
-
-      <img id='images'><img>
     </form>
   </div>
+  </div>
+
 
   <script>
 
