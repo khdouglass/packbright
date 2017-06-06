@@ -1,20 +1,18 @@
 {% extends 'base.html' %}
 
-{% block title %}PACK MANAGER{% endblock %}
+{% block title %}Packbright{% endblock %}
 
 {% block content %}
     
     <style>
       .weather {
-          display: inline-block; 
           color: black;
-          float: right;
-          padding-right: 30px;
-          padding-top: 10px;
+          padding-top: 30px;
       }
       
       #weather {
           display: inline-block;
+          float: left;
       }
 
       .image {
@@ -37,36 +35,50 @@
           z-index: 0;
           top: 30%;
           left: 0;
+          padding-right: 30px;
+          padding-left: 30px;
       }
 
-      #trip {
-          font-weight: bold
-      }
+        #location {
+            font-size: 56px;
+            font-family: 'Varela Round', sans-serif;
 
-      #location {
-          font-size: 30px;
+        }
+
+        #trip{
+            font-size: 32px;
+            font-family: 'Varela Round', sans-serif;
       }
 
       .header {
           font-size: 30px;
           padding-top: 20px;
-          padding-bottom: 10px;
           color: black;
-
+          font-family: 'Varela Round', sans-serif;
       }
 
       .survey {
         font-size: 16px;
-        padding-bottom: 8px;
-
-
+        padding-top: 16px;
       }
 
       .btn-group {
         right-padding: 5px;
         padding-top: 5px;
-        padding-bottom: 5px;
+      }
 
+      .btn-info {
+        background-color: #558BA0;
+        border-color: #2C4853;
+      }
+
+      .btn-info.active {
+        background-color: #2C4853;
+        border-color: #2C4853;
+      }
+
+      .slider-handle {
+        background-image: linear-gradient(to bottom,#D4F3FF 0,#70B7D3 100%);
       }
 
       .buttons {
@@ -85,70 +97,90 @@
         padding-left: 4px;
       }
 
+      label {
+        margin-left: 5px;
+      }
+
+      .container-fluid {
+        display: inline-block;
+        padding-bottom: 20px;
+      }
+
+      .col-xs-7 {
+        padding-left: 10%;
+      }
+
+      .col-xs-5 {
+        padding-right: 10%;
+      }
+
+    .form-control {
+        width: 45px;
+        display: inline-block;
+    }
+
+
     </style>
 
-  <div class="container-fluid">
     <div class='image'>
     <div class='title text-center'>
-      <div id='trip'>{{ location[0] }}, {{ location[1] }}</div>
-      <div id='location'>{{ trip_name }}</div>
-    </div>
-    </div>
+      <div id='location'>{{ location[0] }}, {{ location[1] }}</div>
+      <div id='trip'>{{ trip_name }}</div>
+    </div> <!-- close image -->
+    </div> <!-- close title text -->
 
-    <div class='weather'>
+  <div class='row'> <!-- open -->
+  <div class="container-fluid col-xs-7"> <!-- open -->
+    <div class='header'> Tell us about your time in {{ location[0] }}.</div>
+    <form action='/create_outfits' method=['POST']>
+      <div class='survey'>How long will you be staying?</div>
+      <input id="ex6" type="text" data-slider-min="0" data-slider-max="20" data-slider-step="1" data-slider-value="4"/>
+      <span id="ex6SliderVal">4</span><span id="ex6CurrentSliderValLabel">days</span>
+
+      <div class='survey'>How many of the following outfits will you need? </div>
+      {% for outfit in outfits %}
+      <div>
+      <input type='number' class="form-control" name='{{ outfit }}' style='width: 50px' value='0'>
+      {{ outfit }}
+      </div>
+      {% endfor %}
+
+      <div class='survey'> What activities do you have planned for {{ location[0] }}?</div>
+      <div class='buttons'>
+      {% for activity in activities %}
+      <div class='btn-group ' data-toggle='buttons'>  
+        <label class="btn btn-info">
+        <input id='{{ activity[0] }}' type='checkbox' name='purpose' autocomplete='off' value='{{ activity }}'>{{ activity }}
+        </label>
+      </div> <!-- close btn-group -->
+        {% endfor %}
+      </div> <!-- close buttons -->
+
+      {% if num_location|length == 1 %}
+      <div class='survey'>Will you be flying on this trip?</div>
+      <input type='radio' name='flying' value='yes'><label>Yes</label>
+      <input type='radio' name='flying' value='no'><label>No</label>
+      {% endif %}
+
+      <div class='survey'>
+      <input type='submit' class="btn btn-default" value='Create your list!'>
+    </div>
+    </form>
+  </div> <!-- close container -->
+
+  <div class="container-fluid col-xs-5">
+    <div class='weather text-center'>
     {% for item in weather_list %}
-    <div id='weather' class='weather text-center'>
+    <div id='weather'>
       <img src='{{ item[4] }}'>
       <div>{{ item[0] }}</div>
       <div>{{ item[1] }}</div>
-      <div>{{ item[2] }}°/{{ item[3] }}°</div>
+      <div>{{ item[2] }}° / {{ item[3] }}°</div>
     </div>
     {% endfor %}
     </div>
-
-    <div class='header'> Tell us about your time in {{ location[0] }}.</div>
-
-    <form action='/create_outfits' method=['POST']>
-      <div class='survey'>
-        <div>How long will you be staying?</div>
-        <input id="ex6" type="text" data-slider-min="0" data-slider-max="20" data-slider-step="1" data-slider-value="2"/>
-        <span id="ex6SliderVal">2</span><span id="ex6CurrentSliderValLabel">days </span>
-      </div>
-
-      <div class='survey'>
-        How many of the following outfits will you need? </div>
-        {% for outfit in outfits %}
-        <div class='survey'><input type='number' name='{{ outfit }}' style='width: 50px' value='0'>
-        {{ outfit }}
-        {% endfor %}
-      </div>
-
-    <div class='survey'> What activities do you have planned for {{ location[0] }}?
-     <div class='buttons'>
-     {% for activity in activities %}
-      <div class='btn-group ' data-toggle='buttons'>  
-        <label class="btn btn-info">
-        <input id='{{ activity[0] }}' type='checkbox' name='purpose' autocomplete='off'value='{{ activity }}'>{{ activity }}
-        </label>
-      </div>
-        {% endfor %}
-      </div>
-    </div>
-
-      {% if num_location|length == 1 %}
-      <div class='survey'>
-      Will you be flying on this trip? 
-      <input type='radio' name='flying' value='yes'>Yes
-      <input type='radio' name='flying' value='no'>No
-      </div>
-      {% endif %}
-
-      <div id='survey'></div>
-      <input type='submit' value='Create your list!'>
-    </form>
   </div>
-  </div>
-
+</div> <!-- close row -->
 
   <script>
 

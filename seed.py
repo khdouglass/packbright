@@ -35,7 +35,7 @@ def load_trips():
 def load_locations():
     """Load locations into database."""
 
-    locations = ['Los Angeles, CA, United States', 'New York, NY, United States']
+    locations = ['San Francisco, CA, United States', 'New York, NY, United States']
 
     for location in locations:
         new_location = Location(location_name=location)

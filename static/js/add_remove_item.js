@@ -33,7 +33,7 @@ function displayItem(result) {
     console.log(result.location_visit_items_id);
     $('#packing-list tbody').append(
         '<tr id='+result.location_visit_items_id+'><td>'+result.category+'</td><td>'
-        +result.description+'</td><td>'+result.location+'</td><td><div class="remove">X</div></td></tr>');
+        +result.description+'</td><td>'+result.location+'</td><td><div class="remove"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></div></td></tr>');
 }
 
 function addItem(evt) {
@@ -79,7 +79,7 @@ $(document).on('click','.remove',function(){
     console.log(id);
     });
 
-$(document).on('click','.delete',function(){
+$(document).on('click','.remove',function(){
     // debugger;       
     $(this.parentElement).remove();
     });

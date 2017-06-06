@@ -248,6 +248,8 @@ def new_trip():
             weather_low_avg += int(temp_low)
     f.close()
 
+    print "***WEATHER LIST", weather_list
+
     # add weather details to DB
     if weather_list:
         new_weather = helper_functions.get_weather(weather_list, weather_high_avg, weather_low_avg)

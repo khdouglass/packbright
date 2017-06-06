@@ -1,23 +1,25 @@
 {% extends 'base.html' %}
 
-{% block title %}PACK MANAGER{% endblock %}
+{% block title %}Packbright{% endblock %}
 
 {% block content %}
 
     <style>
         .weather {
-          display: inline-block; 
-          color: black;
-          float: right;
-          padding-right: 50px;
-          padding-top: 10px;
-        }
-
-        #weather {
-            display: inline-block;
-
+            color: black;
+            padding-top: 30px;
+            padding-left: 10px;
         }
       
+        #weather {
+            display: inline-block;
+        }
+
+        #trip {
+            font-size: 56px;
+            font-family: 'Varela Round', sans-serif;
+        }
+
         .image {
             -webkit-filter: grayscale(100%);
             filter: greyscale(100%);
@@ -38,30 +40,153 @@
             z-index: 0;
             top: 30%;
             left: 0;
+            padding-right: 30px;
+            padding-left: 30px;
         }
           
-        h1 {
-            color: white;
-            text-align: center;
+        th {
+            font-size: 22px;
         }
 
-        h2 {
-            color: white;
-            text-align: center;
+        td {
+            padding-bottom: 5px;
+        }
+
+        .remove {
+            display: none;
+        }
+
+        tr:hover .remove {
+            display: inline-block;
+            padding-left: 8px;
+        }
+
+        .subtitle {
+            font-size: 18px;
+            padding-top: 12px;
+        }
+
+        .form-control {
+            width: 160px;
+            height: 28px;
+            margin: 0 auto;
+            display: inline-block;
+            margin: 5px;
+        }
+
+        .btn-default {
+            height: 28px;
+            padding: 0px;
+            padding-left: 3px;
+            padding-right: 3px;
+        }
+        .col-xs-7 {
+            padding-left: 5%;
+        }
+
+        .col-xs-5 {
+            padding-right: 5%;
+        }
+
+        .item-list {
+            padding-top: 20px;
+        }
+
+        .reset {
+            padding-top: 12px;
+            padding-bottom: 12px;
+        }
+
+        td {
+            width: 200px;
+        }
+
+        .remove {
+            width: 10px;
         }
 
     </style>
 
-    <div class="container-fluid">
-        <div class='image'>
-        <div class='title text-center'>
+    <div class='image'>
+    <div class='title text-center'>
         <div id='trip'>{{ trip_name }}</div>
-        </div>
+    </div>
     </div>
 
-    <div class='weather'>
+    <div class='row'> <!-- open -->
+    <div class="container-fluid col-xs-7"> <!-- open -->
+        <div class='item-list'>
+        <table id='packing-list' class='tablesorter'>
+            <thead>
+                <tr>
+                    <th>Category</th>
+                    <th>Description</th>
+                    <th>Location</th>
+                    <th class='remove'></th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for item in items %}
+                <tr id='{{ item[1] }}'>
+                    <td>{{ item[3] }}</td>
+                    <td>{{ item[0] }}</td>
+                    <td>{{ item[2] }}</td>
+                    <td><div class='remove'><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></div></td>
+                </tr>
+            {% endfor %}
+
+            {% for item in core_list %}
+                <tr>
+                    <td>{{ item[1] }}</td>
+                    <td>{{ item[0] }}</td>
+                    <td>Core Packing List<td>
+                </tr>
+            {% endfor %}
+            </tbody>  
+        </table>    
+        </div> <!-- close table -->
+    
+    <div class='add-item'>
+        <div class='subtitle'>Missing an item? Add it here!</div>
+        <form id='new-item' action='/create_list' method='POST'>
+            Category: 
+            <select id='item-category' name='category'>
+                <option value="" disabled selected>Choose One</option>
+                {% for category in categories %}
+                <option value='{{ category[0] }}'>{{ category[0] }}</option>
+                {% endfor %}
+            </select>
+
+            <input type='text' class="form-control" id='item-description' name='description' placeholder='description'>
+
+            <select id='item-location' name='location'>
+                {% for location in location_list %}
+                <option value='{{ location[0] }}'>{{ location[0] }}</option>
+                {% endfor %}
+            </select>
+            <input type="Submit" class="btn btn-default" value='Add'>
+        </form>
+    </div> <!-- close add item -->
+
+    <div class='email'>
+        <form action='/send_email' id='send_email' method='POST'>
+            <div class='subtitle'>Email your packing list!</div>
+            <input type='email' id='email' placeholder='email address'>
+            <input type='submit' class="btn btn-default" value='Send'>
+        </form>
+    </div> <!-- close email -->
+
+    <div class='reset'>
+        <form action='/reset_trip'>
+            <input type='submit' class="btn btn-default" value='Start a new trip!'>
+        </form>
+    </div> <!-- close reset -->
+    </div> <!-- close col -->
+
+<div class="container-fluid col-xs-5">
+    <div class='weather text-center'>
     {% for item in location_weather_list %}
-    <div id='weather' class='weather text-center'>
+    <div id='weather'>
     {% if item[1] %}
         <img src='{{ item[3] }}'>
         <div>{{ item[1] }}°/{{ item[2] }}°</div>
@@ -73,68 +198,11 @@
     {% endif %}
     {% endfor %}
     </div>
-
-    <table id='packing-list' class='tablesorter' style="width:50%">
-        <thead>
-            <tr>
-                <th>Category</th>
-                <th>Item</th>
-                <th>Location</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for item in items %}
-            <tr id='{{ item[1] }}'>
-                <td>{{ item[3] }}</td>
-                <td>{{ item[0] }}</td>
-                <td>{{ item[2] }}</td>
-                <td><div class='remove'>X</div></td>
-            </tr>
-        {% endfor %}
-
-        {% for item in core_list %}
-            <tr>
-                <td>{{ item[1] }}</td>
-                <td>{{ item[0] }}</td>
-                <td>Core Packing List<td>
-            </tr>
-        {% endfor %}
-        </tbody>  
-    </table>    
-
-    <form id='new-item' action='/create_list' method='POST'>
-        Item Category: 
-        <select id='item-category' name='category'>
-            <option value="" disabled selected>Choose One</option>
-            {% for category in categories %}
-            <option value='{{ category[0] }}'>{{ category[0] }}</option>
-            {% endfor %}
-        </select>
-
-        Item Description: <input type='text' id='item-description' 
-        name='description'>
-        
-        Item Location: 
-        <select id='item-location' name='location'>
-            {% for location in location_list %}
-            <option value='{{ location[0] }}'>{{ location[0] }}</option>
-            {% endfor %}
-        </select>
-
-        <input type="Submit" value='Add Item'>
-    </form>
-
-    <form action='/send_email' id='send_email' method='POST'>
-        Email your packing list!
-        <input type='email' id='email' placeholder='email address'>
-        <input type='submit' value='Send'>
-    </form>
-
-    <form action='/reset_trip'>
-        <input type='submit' value='Start a new trip!'>
-    </form>
-    </div>
 </div>
+
+</div> <!-- close row -->
+
+
 
     <script type='text/javascript' src='/static/js/add_remove_item.js'></script>
     <script type='text/javascript' src='/static/js/send_email.js'></script>

@@ -3,15 +3,11 @@
 <head>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Varela+Round" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/jquery.slick/1.6.0/slick.css"/>
     <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/jquery.slick/1.6.0/slick-theme.css"/>
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/9.8.0/css/bootstrap-slider.css"/>
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/9.8.0/css/bootstrap-slider.min.css"/>
-
-    
-
-
-
 
     <style>
         li {
@@ -24,12 +20,37 @@
         .navbar-brand {
             color: black;
         }
-    </style>
 
-    <title>PACK APP NAME</title>
+        .navbar {
+            min-height:50px !important;
+            margin-bottom: 0 !important;
+            background-color: #B9D4DD;
+
+        }
+
+        .navbar-brand>img {
+            height: 55px;
+            width: auto;
+            right: 0;
+        }
+
+        .img {
+            vertical-align: center;
+        }
+
+        a#logo {
+            padding-top: 0;
+            padding-right: 20px;
+        }
+
+
+</style>
+
+    <title>Packbright</title>
 
     <script type="text/javascript"></script>
     <script src='https://code.jquery.com/jquery.js'></script>
+    <script type='text/javascript' src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="https://mottie.github.io/tablesorter/dist/js/jquery.tablesorter.min.js"></script>
     <script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/9.8.0/bootstrap-slider.min.js'></script>
 </head>
@@ -43,8 +64,8 @@
     {% else %}
     <a class="navbar-brand" href="/login">Login</a>
     {% endif %}
+    <a id='logo' href="#" class="navbar-brand navbar-right"><img src='/static/img/logo7.png'></a>
 </nav>
-
 
 {% for flash in get_flashed_messages() %}
   {{ flash }}
@@ -54,7 +75,6 @@
     Put your body here.
 {% endblock %}
 
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
 <script type="text/javascript" src="//cdn.jsdelivr.net/jquery.slick/1.6.0/slick.min.js"></script>
 

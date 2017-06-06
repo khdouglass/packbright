@@ -1,22 +1,30 @@
 {% extends 'base.html' %}
 
-{% block title %}PACK MANAGER{% endblock %}
+{% block title %}Packbright{% endblock %}
 
 {% block content %}
 
     <style>
-        .weather {
-          display: inline-block; 
+      .weather {
           color: black;
-          float: right;
-          padding-right: 30px;
-          padding-top: 10px;
+          padding-top: 30px;
+      }
+      
+      #weather {
+          display: inline-block;
+          float: left;
+      }
+
+        #location {
+            font-size: 56px;
+            font-family: 'Varela Round', sans-serif;
         }
 
-        #weather {
-            display: inline-block;
-
+        #trip{
+            font-size: 32px;
+            font-family: 'Varela Round', sans-serif;
         }
+
         .image {
             -webkit-filter: grayscale(100%);
             filter: greyscale(100%);
@@ -37,86 +45,127 @@
             z-index: 0;
             top: 30%;
             left: 0;
+            padding-right: 30px;
+            padding-left: 30px;
         }
 
         .new-outfit {
             margin-left: auto;
             margin-right: auto;
             display: block;
-            padding: 5px;
         }
 
         .outfit-header {
             font-size: 16px;
-            padding: 2px;
             display: inline-block;
+            padding-bottom: 8px;
         }
 
-        .header {
-            font-size: 24px;
-            padding: 5px;
-        }
+          .header {
+              font-size: 30px;
+              padding-top: 20px;
+              color: black;
+              font-family: 'Varela Round', sans-serif;
+          }
 
         .sub-header {
             font-size: 20px;
-            padding-bottom: 5px;
-            padding-left: 5px;
+            padding-bottom: 15px;
         }
 
         .add-button {
-            padding: 5px;
+            padding-top: 5px;
+            padding-bottom: 10px;
+        }
+
+        .btn-default {
+            height: 28px;
+            padding: 0px;
+            padding-left: 3px;
+            padding-right: 3px;
         }
 
         .added-response {
             display: none;
             padding: 2px;
-            color: red;
+            color: #558BA0;
         }
 
         .missing-item {
-            padding: 5px;
         }
 
         .add-location {
-            padding: 5px;
+            font-size: 20px;
         }
  
         .see-list {
-            padding: 5px;
+            padding-bottom: 20px;
+
         }
 
-        .delete {
+        .remove {
             display: none;
         }
 
-        .outfits:hover .delete {
+        .outfits:hover .remove {
             display: inline-block;
         }
+
+        tr:hover .remove {
+            display: inline-block;
+            padding-left: 8px;
+        }
+
+        .col-xs-7 {
+            padding-left: 10%;
+        }
+
+        .col-xs-5 {
+            padding-right: 10%;
+        }
+        .form-control {
+            width: 200px;
+            display: inline-block;
+            height: 24px;
+        }
+
+/*        .tablesorter {
+            width: 650px;
+        }
+*/
+/*        .remove {
+            width: 10px;
+        }
+*/
+
+        .cat {
+            width: 180px;
+        }
+
+        .item {
+            width: 120px;
+        }
+
+        .remove {
+            width: 10px;
+        }
+
+
     </style>
-    
-    <div class="container-fluid">
-        <div class='image'>
-        <div class='title text-center'>
-        <div id='trip'>{{ location[0] }}, {{ location[1] }}</div>
-        <div id='location'>{{ trip_name }}</div>
-        </div>
+
+    <div class='image'>
+    <div class='title text-center'>
+        <div id='location'>{{ location[0] }}, {{ location[1] }}</div>
+        <div id='trip'>{{ trip_name }}</div>
+    </div>
     </div>
 
-    <div class='weather'>
-    {% for item in session['weather_list'] %}
-    <div id='weather' class='weather text-center'>
-      <img src='{{ item[4] }}'>
-      <div>{{ item[0] }}</div>
-      <div>{{ item[1] }}</div>
-      <div>{{ item[2] }}°/{{ item[3] }}°</div>
-    </div>
-    {% endfor %}
-  </div>
+    <div class='row'> <!-- open -->
+    <div class="container-fluid col-xs-7"> <!-- open -->
+        <div class='header'>Your Outfits</div>
+        <div class='sub-header'>Complete your outfits by adding the items you want to pack.</div>
 
-    <div class='header'>Create Your Outfits</div>
-    <div class='sub-header'>Complete your outfits by adding the items you want to pack.</div>
-
-    {% for outfit in range(num_formal|int) %}
+        {% for outfit in range(num_formal|int) %}
         <div class='outfits'>
         <div class='outfit-header'>Formal outfit #{{ outfit + 1 }}</div>
         <div class='added-response'>Added!</div>
@@ -128,8 +177,9 @@
                 <option value='{{ category[0] }}'>{{ category[0] }}</option>
                 {% endfor %}
             </select>
-            Description: <input type='text' class='shirt-description' name='description'>
-                <div class="delete"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></div></div>
+            <input type='text' class="form-control" class='shirt-description' name='description' placeholder='description'>
+                <div class="remove"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></div>
+            </div>
 
             <div>Category: 
             <select class='pants-category' name='category'>
@@ -138,8 +188,9 @@
                 <option value='{{ category[0] }}'>{{ category[0] }}</option>
                 {% endfor %}
             </select>
-            Description: <input type='text' class='pants-description' name='description'>
-                <div class="delete"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></div></div>
+            <input type='text' class="form-control" class='pants-description' name='description' placeholder='description'>
+                <div class="remove"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></div>
+            </div>
 
             <div>Category: 
             <select class='shoes-category' name='category'>
@@ -148,9 +199,10 @@
                 <option value='{{ category[0] }}'>{{ category[0] }}</option>
                 {% endfor %}
             </select>
-            Description: <input type='text' class='shoes-description' name='description'>
-                <div class="delete"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></div></div>
-            <div class='add-button'><input type="Submit" value='Add Outfit'></div>
+            <input type='text' class="form-control" class='shoes-description' name='description' placeholder='description'>
+                <div class="remove"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></div>
+            </div>
+            <div class='add-button'><input type="Submit" class="btn btn-default" value='Add Outfit'></div>
         </form>
     </div>
     {% endfor %}
@@ -167,8 +219,9 @@
                 <option value='{{ category[0] }}'>{{ category[0] }}</option>
                 {% endfor %}
             </select>
-            Description: <input type='text' class='shirt-description' name='description'>
-                <div class="delete"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></div></div>
+            <input type='text' class="form-control" class='shirt-description' name='description' placeholder='description'>
+                <div class="remove"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></div>
+            </div>
 
             <div>Category: 
             <select class='pants-category' name='category'>
@@ -177,8 +230,9 @@
                 <option value='{{ category[0] }}'>{{ category[0] }}</option>
                 {% endfor %}
             </select>
-            Description: <input type='text' class='pants-description' name='description'>
-                <div class="delete"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></div></div>
+            <input type='text' class="form-control" class='pants-description' name='description' placeholder='description'>
+                <div class="remove"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></div>
+            </div>
 
             <div>Category: 
             <select class='shoes-category' name='category'>
@@ -187,9 +241,10 @@
                 <option value='{{ category[0] }}'>{{ category[0] }}</option>
                 {% endfor %}
             </select>
-            Description: <input type='text' class='shoes-description' name='description'>
-                <div class="delete"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></div></div>
-            <div class='add-button'><input type="Submit" value='Add Outfit'></div>
+            <input type='text' class="form-control" class='shoes-description' name='description' placeholder='description'>
+                <div class="remove"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></div>
+            </div>
+            <div class='add-button'><input type="Submit" class="btn btn-default" value='Add Outfit'></div>
         </form>
     </div>
     {% endfor %}
@@ -206,8 +261,9 @@
                 <option value='{{ category[0] }}'>{{ category[0] }}</option>
                 {% endfor %}
             </select>
-            Description: <input type='text' class='shirt-description' name='description'>
-                <div class="delete"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></div></div>
+            <input type='text' class="form-control" class='shirt-description' name='description' placeholder='description'>
+                <div class="remove"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></div>
+            </div>
 
             <div>Category: 
             <select class='pants-category' name='category'>
@@ -216,8 +272,9 @@
                 <option value='{{ category[0] }}'>{{ category[0] }}</option>
                 {% endfor %}
             </select>
-            Description: <input type='text' class='pants-description' name='description'>
-                <div class="delete"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></div></div>
+            <input type='text' class="form-control" class='pants-description' name='description' placeholder='description'>
+                <div class="remove"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></div>
+            </div>
 
             <div>Category: 
             <select class='shoes-category' name='category'>
@@ -226,9 +283,10 @@
                 <option value='{{ category[0] }}'>{{ category[0] }}</option>
                 {% endfor %}
             </select>
-            Description: <input type='text' class='shoes-description' name='description'>
-                <div class="delete"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></div></div>
-            <div class='add-button'><input type="Submit" value='Add Outfit'></div>
+            <input type='text' class="form-control" class='shoes-description' name='description' placeholder='description'>
+                <div class="remove"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></div>
+            </div>
+            <div class='add-button'><input type="Submit" class="btn btn-default" value='Add Outfit'></div>
         </form>
     </div>
     {% endfor %}
@@ -245,8 +303,9 @@
                 <option value='{{ category[0] }}'>{{ category[0] }}</option>
                 {% endfor %}
             </select>
-            Description: <input type='text' class='shirt-description' name='description'>
-                <div class="delete"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></div></div>
+            <input type='text' class="form-control" class='shirt-description' name='description' placeholder='description'>
+                <div class="remove"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></div>
+            </div>
 
             <div>Category: 
             <select class='pants-category' name='category'>
@@ -255,8 +314,9 @@
                 <option value='{{ category[0] }}'>{{ category[0] }}</option>
                 {% endfor %}
             </select>
-            Description: <input type='text' class='pants-description' name='description'>
-                <div class="delete"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></div></div>
+            <input type='text' class="form-control" class='pants-description' name='description' placeholder='description'>
+                <div class="remove"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></div>
+            </div>
 
             <div>Category: 
             <select class='shoes-category' name='category'>
@@ -265,15 +325,16 @@
                 <option value='{{ category[0] }}'>{{ category[0] }}</option>
                 {% endfor %}
             </select>
-            Description: <input type='text' class='shoes-description' name='description'>
-                <div class="delete"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></div></div>
-            <div class='add-button'><input type="Submit" value='Add Outfit'></div>
+            <input type='text' class="form-control" class='shoes-description' name='description' placeholder='description'>
+                <div class="remove"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></div>
+            </div>
+            <div class='add-button'><input type="Submit" class="btn btn-default" value='Add Outfit'></div>
         </form>
     </div>
     {% endfor %}
 
     <div class='missing-item'>
-    Missing an item or outfit? Add them here!
+    <div class='outfit-header'>Missing an item or outfit? Add them here!</div>
     <form id='new-item' method='POST'>
         Category: 
         <select id='item-category' name='category'>
@@ -282,15 +343,15 @@
             <option value='{{ category[0] }}'>{{ category[0] }}</option>
             {% endfor %}
         </select>
-        Description: <input type='text' id='item-description' name='description'>
-        <input type="Submit" value='Add Item'>
+        <input type='text' class="form-control" id='item-description' name='description' placeholder='description'>
+        <input type="Submit" class="btn btn-default" value='Add Item'>
     </form>
 
-    <table id='packing-list' class='tablesorter' style="width:50%">
+    <table id='packing-list' class='tablesorter'>
         <thead>
             <tr>
-                <th>Category</th>
-                <th>Item</th>
+                <th class='cat'>Category</th>
+                <th class='item'>Description</th>
                 <th>Location</th>
                 <th></th>
             </tr>
@@ -301,19 +362,32 @@
     </div>
 
      <div class='add-location'>
-     <form method='POST' action='/new_trip'>    
-        Add another location to your trip: <input type='text' name='location' id='autocomplete'>
-        <input type='submit' id='submit_location' value='Go!'>
+        <form method='POST' action='/new_trip'>    
+            <div class='outfit-header'>Add another location to your trip:</div> <input type='text' class="form-control" name='location' id='autocomplete'>
+            <input type='submit' class="btn btn-default" id='submit_location' value='Go!'>
+        </form>
     </div>
-    </form>
 
     <div class='see-list'>
-    <form action="/packing_list/{{trip_name}}">
-        <input type='submit' id='submit_location' value='Show Me My Packing List!'>
-    </form>
+        <form action="/packing_list/{{trip_name}}">
+            <input type='submit' class="btn btn-default" id='submit_location' value='Show Me My Packing List!'>
+        </form>
     </div>
     </div>
 
+  <div class="container-fluid col-xs-5">
+    <div class='weather'>
+    {% for item in session['weather_list'] %}
+    <div id='weather' class='weather text-center'>
+      <img src='{{ item[4] }}'>
+      <div>{{ item[0] }}</div>
+      <div>{{ item[1] }}</div>
+      <div>{{ item[2] }}° / {{ item[3] }}°</div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+</div>
 
     <script type='text/javascript' src='/static/js/location.js'></script>
     <script type='text/javascript' src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAzyl6IGlGGmnVCqHiAluta6VfjuGf6Fec&libraries=places"></script>

@@ -1,34 +1,93 @@
 {% extends 'base.html' %}
 
-{% block title %}PACK MANAGER{% endblock %}
+{% block title %}Packbright{% endblock %}
 
 {% block content %}
-    <div class="container-fluid">
-    <h1>THE PACK MANAGER </h1>
+    <style>
 
-    <h4>Start packing for your next trip!</h4>
+    .header {
+        padding-top: 10px;
+        height: 300px
+    }
+
+    img {
+        max-width: 100%;
+        max-height: 100%;
+    }
+
+    .container-fluid {        
+        background-color: #B9D4DD;
+        background-size: cover;
+        height: 720px;
+        width: 100%;
+}
+    .subtitle {
+        font-size: 24px;
+    }
+
+    .login-form {
+        padding: 10px;
+    }
+
+    .member {
+        font-size: 16px;
+    }
+
+    .form-control {
+        width: 250px;
+        margin: 0 auto;
+        padding-left: 6px;
+    }
+
+    .sign-in {
+        padding-bottom: 6px;
+        margin-top: 6px; 
+    }
+
+    .new-user {
+        padding-top: 10px;
+    }
+
+    img {
+        opacity: 0.9;
+    }
+
+    .navbar-brand>img {
+        display: none;
+    }
+
+    .navbar {
+        background-color: white;
+    }
+
+    a {
+        color: #2C4853;
+    }
+    </style>
+
+    <div class="container-fluid text-center">
+        <div class='header'><img src='/static/img/logo5.png'></div>
+        <div class='subtitle'>Start packing for your next trip!</div>   
+    <div class='login-form'>
     <form action='/login' method='POST'>
-        <div>
-            <label>Username:
-                <input type='text' name='username' required>
-            </label>
+        <div class='sign-in'>
+            <input type='text' class="form-control" name='username' placeholder='Username' required>
         </div>
         <div>
-            <label>Password:
-                <input type='password' name='password' required>
-            </label>
+            <input type='password' class="form-control" name='password' placeholder='Password' required>
         </div>
-        <div>
-            <input type='submit' value='Log In'>
+        <div class='sign-in'>
+            <input class="btn btn-default" type='submit' value='Log In'>
         </div>
     </form>
-
-    <form action='/register'>
-        <div>
-            <label>Not a member? Sign up!
-                <input type='submit' value='Sign Up'>
-            </label> 
-        </div>
-    </form>
+    </div>
+    <div class='new-user'>
+        <form action='/register'>
+            <div class='member'>
+                <a href="/register">Not a member?</a>
+            </div>
+        </form>
+    </div>
 </div>
+
 {% endblock %}
