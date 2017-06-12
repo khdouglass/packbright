@@ -512,7 +512,7 @@ def remove_item():
 
     return "Item deleted"
 
-
+# 
 @app.route('/packing_list/<trip_name>')
 def complete_list(trip_name):
     """Display complete packing list for trip."""
@@ -592,7 +592,7 @@ if __name__ == "__main__":
     connect_to_db(app)
 
     # Use the DebugToolbar
-    DebugToolbarExtension(app)
+    # DebugToolbarExtension(app)
 
     app.run(host="0.0.0.0")
 

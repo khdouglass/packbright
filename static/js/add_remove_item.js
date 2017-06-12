@@ -8,6 +8,7 @@ hgggghghhg
 function addOutfit(evt) {
     evt.preventDefault();
     console.log('SUBMIT');
+    debugger;
 
     var formInputs = {
         "shirt-category": $($(this).find('.shirt-category')[0]).val(),

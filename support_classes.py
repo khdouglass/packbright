@@ -49,7 +49,7 @@ class SuggestedList(object):
     def need_jacket(self):
         for item in self.weather_list:
             if int(item[3]) < 55:
-                return ('Jacket', '')
+                return ('Jacket', 'Denim Jacket')
 
     def need_umbrella(self):
         for item in self.weather_list:
@@ -58,8 +58,8 @@ class SuggestedList(object):
 
     def misc_items(self):
         items = []
-        if self.num_days:
-            items.extend([('Sleepwear', 'Pajamas'), ('Technology', 'Cell Phone Charger')])
+        # if self.num_days:
+        items.extend([('Sleepwear', 'Pajamas'), ('Technology', 'Cell Phone Charger')])
         items.extend([('Undergarments', str(self.outfit_sum))])
 
         return items

@@ -21,7 +21,7 @@ def email_packing_list(user_email, recipient_email, first_name, trip_name, items
     print(response.headers)
 
 
-template= jinja2.Template("""
+template = jinja2.Template("""
 <html>
 <h1>{{ trip_name }}</h1>
 <thead>

@@ -3,124 +3,23 @@
 {% block title %}Packbright{% endblock %}
 
 {% block content %}
-    
-    <style>
-      .weather {
-          color: black;
-          padding-top: 30px;
-      }
-      
-      #weather {
-          display: inline-block;
-          float: left;
-      }
 
-      .image {
-          -webkit-filter: grayscale(100%);
-          filter: greyscale(100%);
-          width: 100%;
-          height: 300px;
-          background-image: url('{{ location_image_url }}');
-          background-size: cover;
-          background-position: center;
-          position: relative;
-      }
-      
-      .title {
-          position: absolute;
-          color: white;
-          font-size: 44px;
-          background-color: rgba(0,0,0,0.5);
-          opacity: 10;
-          z-index: 0;
-          top: 30%;
-          left: 0;
-          padding-right: 30px;
-          padding-left: 30px;
-      }
+  <link rel="stylesheet" href="/static/css/new_trip.css">
 
-        #location {
-            font-size: 56px;
-            font-family: 'Varela Round', sans-serif;
+  <style>
 
-        }
-
-        #trip{
-            font-size: 32px;
-            font-family: 'Varela Round', sans-serif;
-      }
-
-      .header {
-          font-size: 30px;
-          padding-top: 20px;
-          color: black;
-          font-family: 'Varela Round', sans-serif;
-      }
-
-      .survey {
-        font-size: 16px;
-        padding-top: 16px;
-      }
-
-      .btn-group {
-        right-padding: 5px;
-        padding-top: 5px;
-      }
-
-      .btn-info {
-        background-color: #558BA0;
-        border-color: #2C4853;
-      }
-
-      .btn-info.active {
-        background-color: #2C4853;
-        border-color: #2C4853;
-      }
-
-      .slider-handle {
-        background-image: linear-gradient(to bottom,#D4F3FF 0,#70B7D3 100%);
-      }
-
-      .buttons {
-        width: 600px;
-      }
-
-      #ex6SliderVal .slider-selection {
-        background: #BABABA;
-      }
-
-      #ex6SliderVal {
-        padding-left: 10px;
-      }
-
-      #ex6CurrentSliderValLabel {
-        padding-left: 4px;
-      }
-
-      label {
-        margin-left: 5px;
-      }
-
-      .container-fluid {
-        display: inline-block;
-        padding-bottom: 20px;
-      }
-
-      .col-xs-7 {
-        padding-left: 10%;
-      }
-
-      .col-xs-5 {
-        padding-right: 10%;
-      }
-
-    .form-control {
-        width: 45px;
-        display: inline-block;
+    .image {
+        -webkit-filter: grayscale(100%);
+        filter: greyscale(100%);
+        width: 100%;
+        height: 300px;
+        background-image: url('{{ location_image_url }}');
+        background-size: cover;
+        background-position: center;
+        position: relative;
     }
 
-
-    </style>
+  </style>
 
     <div class='image'>
     <div class='title text-center'>

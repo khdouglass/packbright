@@ -9,6 +9,8 @@ function sendEmail(evt) {
 
     $.post("/send_email", formInputs);
     $("#email").val("");
+    $("#email-sent").css("display", "inline-block");
+    // $('#email-btn').prop("disabled",true);
 };
 
 $('#send_email').on('submit', sendEmail);

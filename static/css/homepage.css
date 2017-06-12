@@ -1,0 +1,62 @@
+a {
+    color: #2C4853;
+}
+
+img {
+    max-width: 100%;
+    max-height: 100%;
+    opacity: 0.9;
+
+}
+
+.container-fluid {        
+    background-color: #B9D4DD;
+    background-size: cover;
+    height: 720px;
+    width: 100%;
+}
+
+.form-control {
+    width: 250px;
+    margin: 0 auto;
+    padding-left: 6px;
+}
+
+.header {
+    padding-top: 10px;
+    height: 300px
+}
+
+.login-form {
+    padding: 10px;
+}
+
+.member {
+    font-size: 16px;
+}
+
+.navbar {
+    background-color: white;
+}
+
+.navbar-brand {
+    color: white;
+}
+
+.navbar-brand>img {
+    display: none;
+}
+
+.new-user {
+    padding-top: 10px;
+}
+
+.sign-in {
+    padding-bottom: 6px;
+    margin-top: 6px; 
+}
+
+.subtitle {
+    font-size: 24px;
+}
+

@@ -4,26 +4,9 @@
 
 {% block content %}
 
+    <link rel="stylesheet" href="/static/css/create_outfits.css">
+
     <style>
-      .weather {
-          color: black;
-          padding-top: 30px;
-      }
-      
-      #weather {
-          display: inline-block;
-          float: left;
-      }
-
-        #location {
-            font-size: 56px;
-            font-family: 'Varela Round', sans-serif;
-        }
-
-        #trip{
-            font-size: 32px;
-            font-family: 'Varela Round', sans-serif;
-        }
 
         .image {
             -webkit-filter: grayscale(100%);
@@ -35,121 +18,6 @@
             background-position: center;
             position: relative;
         }
-      
-        .title {
-            position: absolute;
-            color: white;
-            font-size: 44px;
-            background-color: rgba(0,0,0,0.5);
-            opacity: 10;
-            z-index: 0;
-            top: 30%;
-            left: 0;
-            padding-right: 30px;
-            padding-left: 30px;
-        }
-
-        .new-outfit {
-            margin-left: auto;
-            margin-right: auto;
-            display: block;
-        }
-
-        .outfit-header {
-            font-size: 16px;
-            display: inline-block;
-            padding-bottom: 8px;
-        }
-
-          .header {
-              font-size: 30px;
-              padding-top: 20px;
-              color: black;
-              font-family: 'Varela Round', sans-serif;
-          }
-
-        .sub-header {
-            font-size: 20px;
-            padding-bottom: 15px;
-        }
-
-        .add-button {
-            padding-top: 5px;
-            padding-bottom: 10px;
-        }
-
-        .btn-default {
-            height: 28px;
-            padding: 0px;
-            padding-left: 3px;
-            padding-right: 3px;
-        }
-
-        .added-response {
-            display: none;
-            padding: 2px;
-            color: #558BA0;
-        }
-
-        .missing-item {
-        }
-
-        .add-location {
-            font-size: 20px;
-        }
- 
-        .see-list {
-            padding-bottom: 20px;
-
-        }
-
-        .remove {
-            display: none;
-        }
-
-        .outfits:hover .remove {
-            display: inline-block;
-        }
-
-        tr:hover .remove {
-            display: inline-block;
-            padding-left: 8px;
-        }
-
-        .col-xs-7 {
-            padding-left: 10%;
-        }
-
-        .col-xs-5 {
-            padding-right: 10%;
-        }
-        .form-control {
-            width: 200px;
-            display: inline-block;
-            height: 24px;
-        }
-
-/*        .tablesorter {
-            width: 650px;
-        }
-*/
-/*        .remove {
-            width: 10px;
-        }
-*/
-
-        .cat {
-            width: 180px;
-        }
-
-        .item {
-            width: 120px;
-        }
-
-        .remove {
-            width: 10px;
-        }
-
 
     </style>
 
@@ -219,7 +87,7 @@
                 <option value='{{ category[0] }}'>{{ category[0] }}</option>
                 {% endfor %}
             </select>
-            <input type='text' class="form-control" class='shirt-description' name='description' placeholder='description'>
+            <input type='text' class="form-control shirt-description" name='description' placeholder='description'>
                 <div class="remove"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></div>
             </div>
 
@@ -230,7 +98,7 @@
                 <option value='{{ category[0] }}'>{{ category[0] }}</option>
                 {% endfor %}
             </select>
-            <input type='text' class="form-control" class='pants-description' name='description' placeholder='description'>
+            <input type='text' class="form-control pants-description" name='description' placeholder='description'>
                 <div class="remove"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></div>
             </div>
 
@@ -241,7 +109,7 @@
                 <option value='{{ category[0] }}'>{{ category[0] }}</option>
                 {% endfor %}
             </select>
-            <input type='text' class="form-control" class='shoes-description' name='description' placeholder='description'>
+            <input type='text' class="form-control shoes-description" name='description' placeholder='description'>
                 <div class="remove"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></div>
             </div>
             <div class='add-button'><input type="Submit" class="btn btn-default" value='Add Outfit'></div>
@@ -261,7 +129,7 @@
                 <option value='{{ category[0] }}'>{{ category[0] }}</option>
                 {% endfor %}
             </select>
-            <input type='text' class="form-control" class='shirt-description' name='description' placeholder='description'>
+            <input type='text' class="form-control shirt-description" name='description' placeholder='description'>
                 <div class="remove"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></div>
             </div>
 
@@ -272,7 +140,7 @@
                 <option value='{{ category[0] }}'>{{ category[0] }}</option>
                 {% endfor %}
             </select>
-            <input type='text' class="form-control" class='pants-description' name='description' placeholder='description'>
+            <input type='text' class="form-control pants-description" name='description' placeholder='description'>
                 <div class="remove"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></div>
             </div>
 
@@ -283,7 +151,7 @@
                 <option value='{{ category[0] }}'>{{ category[0] }}</option>
                 {% endfor %}
             </select>
-            <input type='text' class="form-control" class='shoes-description' name='description' placeholder='description'>
+            <input type='text' class="form-control shoes-description" name='description' placeholder='description'>
                 <div class="remove"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></div>
             </div>
             <div class='add-button'><input type="Submit" class="btn btn-default" value='Add Outfit'></div>
@@ -303,7 +171,7 @@
                 <option value='{{ category[0] }}'>{{ category[0] }}</option>
                 {% endfor %}
             </select>
-            <input type='text' class="form-control" class='shirt-description' name='description' placeholder='description'>
+            <input type='text' class="form-control shirt-description" name='description' placeholder='description'>
                 <div class="remove"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></div>
             </div>
 
@@ -314,7 +182,7 @@
                 <option value='{{ category[0] }}'>{{ category[0] }}</option>
                 {% endfor %}
             </select>
-            <input type='text' class="form-control" class='pants-description' name='description' placeholder='description'>
+            <input type='text' class="form-control pants-description" name='description' placeholder='description'>
                 <div class="remove"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></div>
             </div>
 
@@ -325,7 +193,7 @@
                 <option value='{{ category[0] }}'>{{ category[0] }}</option>
                 {% endfor %}
             </select>
-            <input type='text' class="form-control" class='shoes-description' name='description' placeholder='description'>
+            <input type='text' class="form-control shoes-description" name='description' placeholder='description'>
                 <div class="remove"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></div>
             </div>
             <div class='add-button'><input type="Submit" class="btn btn-default" value='Add Outfit'></div>

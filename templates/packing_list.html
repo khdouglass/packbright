@@ -4,22 +4,9 @@
 
 {% block content %}
 
+    <link rel="stylesheet" href="/static/css/packing_list.css">
+
     <style>
-        .weather {
-            color: black;
-            padding-top: 30px;
-            padding-left: 10px;
-        }
-      
-        #weather {
-            display: inline-block;
-        }
-
-        #trip {
-            font-size: 56px;
-            font-family: 'Varela Round', sans-serif;
-        }
-
         .image {
             -webkit-filter: grayscale(100%);
             filter: greyscale(100%);
@@ -30,81 +17,6 @@
             background-position: center;
             position: relative;
         }
-      
-        .title {
-            position: absolute;
-            color: white;
-            font-size: 44px;
-            background-color: rgba(0,0,0,0.5);
-            opacity: 10;
-            z-index: 0;
-            top: 30%;
-            left: 0;
-            padding-right: 30px;
-            padding-left: 30px;
-        }
-          
-        th {
-            font-size: 22px;
-        }
-
-        td {
-            padding-bottom: 5px;
-        }
-
-        .remove {
-            display: none;
-        }
-
-        tr:hover .remove {
-            display: inline-block;
-            padding-left: 8px;
-        }
-
-        .subtitle {
-            font-size: 18px;
-            padding-top: 12px;
-        }
-
-        .form-control {
-            width: 160px;
-            height: 28px;
-            margin: 0 auto;
-            display: inline-block;
-            margin: 5px;
-        }
-
-        .btn-default {
-            height: 28px;
-            padding: 0px;
-            padding-left: 3px;
-            padding-right: 3px;
-        }
-        .col-xs-7 {
-            padding-left: 5%;
-        }
-
-        .col-xs-5 {
-            padding-right: 5%;
-        }
-
-        .item-list {
-            padding-top: 20px;
-        }
-
-        .reset {
-            padding-top: 12px;
-            padding-bottom: 12px;
-        }
-
-        td {
-            width: 200px;
-        }
-
-        .remove {
-            width: 10px;
-        }
-
     </style>
 
     <div class='image'>
@@ -119,8 +31,8 @@
         <table id='packing-list' class='tablesorter'>
             <thead>
                 <tr>
-                    <th>Category</th>
-                    <th>Description</th>
+                    <th class='cat'>Category</th>
+                    <th class='desc'>Description</th>
                     <th>Location</th>
                     <th class='remove'></th>
                 </tr>
@@ -172,7 +84,8 @@
         <form action='/send_email' id='send_email' method='POST'>
             <div class='subtitle'>Email your packing list!</div>
             <input type='email' id='email' placeholder='email address'>
-            <input type='submit' class="btn btn-default" value='Send'>
+            <input type='submit' id ='email-btn' class="btn btn-default" value='Send'>
+            <div id='email-sent'>Packing list sent!</div>
         </form>
     </div> <!-- close email -->
 
