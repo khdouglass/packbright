@@ -13,6 +13,7 @@ from model import (connect_to_db, db, User, Trip, Location, Image, LocationVisit
 from support_classes import SuggestedList
 from flickr import get_location_image
 from sendgrid_send_email import email_packing_list
+import bcrypt
 
 app = Flask(__name__)
 
@@ -49,7 +50,11 @@ def register_process():
     first_name = request.form.get('first_name')
     last_name = request.form.get('last_name')
     email = request.form.get('email')
-    password = request.form.get('password')
+    
+    # get password and hash it
+    password = request.form.get("password").rstrip()
+    password = password.encode('utf8')
+    hashed = bcrypt.hashpw(password, bcrypt.gensalt())
 
     user_exists = db.session.query(User.user_id).filter_by(user_id=user_id, email=email).first()
 
@@ -77,23 +82,28 @@ def login():
     # get user input
     user_id = request.form.get('username')
     password = request.form.get('password')
+    
+    # check hased password
+    password = password.encode('utf8')
+    hashedpass = bcrypt.hashpw(password, bcrypt.gensalt())
+    if bcrypt.checkpw(password, hashedpass):
+            
+        # set session to user_id
+        session['user_id'] = user_id
+
+        return redirect('/user_landing/' + user_id)
+    else:
+        # redirect if password is incorrect    
+        flash('Password is incorrect!')
+        return redirect('/')
 
     # query db for user_id
     user = db.session.query(User).filter_by(user_id=user_id).first()
 
-    # flash message and redirect if username or password is incorrect
+    # flash message and redirect if is incorrect
     if user is None:
         flash('User does not exist!')
         return redirect('/')
-
-    if user.password != password:
-        flash('Password is incorrect!')
-        return redirect('/')
-
-    # set session to user_id
-    session['user_id'] = user_id
-
-    return redirect('/user_landing/' + user_id)
 
 
 @app.route('/logout')
@@ -110,7 +120,10 @@ def user_landing(user_id):
     """Display user landing page."""
 
     # get user's trips to from db to display
-    trips = db.session.query(Location.location_name, Trip.trip_name).join(LocationVisit, Trip).filter_by(user_id=user_id).all()
+    trips = db.session.query(Location.location_name, Trip.trip_name)\
+                      .join(LocationVisit, Trip)\
+                      .filter_by(user_id=user_id)\
+                      .all()
 
     trip_info = []
     for trip in trips:
@@ -133,10 +146,13 @@ def core_list():
 
     # get core list items and categories from db 
     core_list = db.session.query(Item.description, Category.category_name, CoreListItem.core_list_item_id)\
-                           .join(CoreListItem, CoreList, Category)\
-                           .filter(CoreList.user_id==user_id)\
+                          .join(CoreListItem, CoreList, Category)\
+                          .filter(CoreList.user_id==user_id)\
+                          .all()
+
+    categories = db.session.query(Category.category_name)\
+                           .order_by(Category.category_name)\
                            .all()
-    categories = db.session.query(Category.category_name).order_by(Category.category_name).all()
 
 
     return render_template('create_core_list.html', core_list=core_list, categories=categories)
@@ -173,7 +189,10 @@ def process_core_list():
     core_item_id = new_core_item.core_list_item_id
     
     # get item description and category from db
-    core_item_details = db.session.query(Item.description, Category.category_name).join(Category, CoreListItem).filter_by(core_list_item_id=core_item_id).one()
+    core_item_details = db.session.query(Item.description, Category.category_name)\
+                                  .join(Category, CoreListItem)\
+                                  .filter_by(core_list_item_id=core_item_id)\
+                                  .one()
     core_item_dict = {}
 
     # add item info to dictionary
@@ -248,8 +267,6 @@ def new_trip():
             weather_low_avg += int(temp_low)
     f.close()
 
-    print "***WEATHER LIST", weather_list
-
     # add weather details to DB
     if weather_list:
         new_weather = helper_functions.get_weather(weather_list, weather_high_avg, weather_low_avg)
@@ -283,58 +300,6 @@ def new_trip():
                                             outfits=outfits, num_location=num_location,
                                             location_image_url=location_image_url)
 
-# @app.route('/create_list')
-# def create_list():
-#     """Create outfits list for specified location."""
-
-#     # get info from html
-#     num_formal = int(request.args.get('Formal'))
-#     num_casual = int(request.args.get('Casual'))
-#     num_active = int(request.args.get('Active'))
-#     num_going_out = int(request.args.get('Going Out'))
-#     num_days = request.args.get('num_days') 
-#     flying = request.args.get('flying')
-#     activities_list = request.args.getlist('purpose')
-
-#     outfit_sum = (num_formal + num_casual + num_active + num_going_out)
-
-#     # get info from session
-#     weather_list = session['weather_list']
-#     location = session['location']
-#     trip_name = session['trip_name']
-#     trip_id = session['trip_id']
-#     location = session['location']
-
-#     # create new suggeted list instance
-#     new_list = SuggestedList(location, weather_list, activities_list, num_days, outfit_sum)
-    
-#     # call suggested list methods
-#     passport = new_list.need_passport()
-#     sunglasses = new_list.need_sunglasses()
-#     jacket = new_list.need_jacket() 
-#     umbrella = new_list.need_umbrella()
-#     activities_items_list = list(set(new_list.activities()))
-#     misc_items = new_list.misc_items()
-
-#     # get categories from DB
-#     categories = db.session.query(Category.category_name).order_by(Category.category_name).all()
-
-#     location_image_url = get_location_image(location[0])
-
-#     # get current list of trip items
-#     trip_locations = db.session.query(LocationVisit.location_visit_id).join(Trip).filter_by(trip_name=trip_name).all()
-#     items = db.session.query(Item.description, LocationVisitItem.location_visit_items_id, Location.location_name, Category.category_name).join(LocationVisitItem, LocationVisit, Category, Location).filter(LocationVisit.location_visit_id.in_(trip_locations)).all()
-
-#     return render_template('create_list.html', location=location, flying=flying,
-#                                                num_formal=num_formal, num_casual=num_casual,
-#                                                num_active=num_active, num_going_out=num_going_out,
-#                                                passport=passport, sunglasses=sunglasses,
-#                                                jacket=jacket, umbrella=umbrella,
-#                                                categories=categories, trip_name=trip_name,
-#                                                items=items, activities_items_list = activities_items_list,
-#                                                misc_items=misc_items, location_image_url=location_image_url)
-
-
 
 @app.route('/create_outfits')
 def create_outfits():
@@ -357,7 +322,6 @@ def create_outfits():
     trip_name = session['trip_name']
     location = session['location']
     location_visit_id = session['location_visit_id']
-
 
     # create new suggeted list instance
     new_list = SuggestedList(location, weather_list, activities_list, num_days, outfit_sum)
@@ -430,7 +394,9 @@ def add_outfit():
             trip_id = session['trip_id']
             # get location_id and location_visit_id from db using trip_id
             location_id = db.session.query(Location.location_id).filter_by(location_name=item_location)
-            location_visit_id = db.session.query(LocationVisit.location_visit_id).filter_by(location_id=location_id, trip_id=trip_id).one()
+            location_visit_id = db.session.query(LocationVisit.location_visit_id)\
+                                          .filter_by(location_id=location_id, trip_id=trip_id)\
+                                          .one()
         else:
             location_visit_id = session['location_visit_id']
 
@@ -467,7 +433,9 @@ def add_item():
         trip_id = session['trip_id']
         # get location_id and location_visit_id from db using trip_id
         location_id = db.session.query(Location.location_id).filter_by(location_name=item_location)
-        location_visit_id = db.session.query(LocationVisit.location_visit_id).filter_by(location_id=location_id, trip_id=trip_id).one()
+        location_visit_id = db.session.query(LocationVisit.location_visit_id)\
+                                      .filter_by(location_id=location_id, trip_id=trip_id)\
+                                      .one()
     else:
         location_visit_id = session['location_visit_id']
 
@@ -481,7 +449,10 @@ def add_item():
     item_id = new_location_visit_item.location_visit_items_id
 
     # get item details
-    item_details = db.session.query(Item.description, Category.category_name).join(Category, LocationVisitItem).filter_by(location_visit_items_id=item_id).one()
+    item_details = db.session.query(Item.description, Category.category_name)\
+                             .join(Category, LocationVisitItem)\
+                             .filter_by(location_visit_items_id=item_id)\
+                             .one()
 
     item_dict = {}
 
@@ -520,7 +491,10 @@ def complete_list(trip_name):
     user_id = session['user_id']
 
     trip_id = db.session.query(Trip.trip_id).filter_by(trip_name=trip_name).one()
-    location_list = db.session.query(Location.location_name).join(LocationVisit, Trip).filter_by(trip_id=trip_id).all()
+    location_list = db.session.query(Location.location_name)\
+                              .join(LocationVisit, Trip)\
+                              .filter_by(trip_id=trip_id)\
+                              .all()
 
     session['trip_id'] = trip_id
 
@@ -528,19 +502,26 @@ def complete_list(trip_name):
     categories = db.session.query(Category.category_name).order_by(Category.category_name).all()
 
     # query db for location weather
-    location_weather_list = db.session.query(Location.location_name, Weather.temperature_high, Weather.temperature_low, WeatherSummary.icon_url).outerjoin(LocationVisit, Weather, WeatherSummary).filter(LocationVisit.trip_id==trip_id).all()
+    location_weather_list = db.session.query(Location.location_name, Weather.temperature_high, Weather.temperature_low, WeatherSummary.icon_url)\
+                                      .outerjoin(LocationVisit, Weather, WeatherSummary)\
+                                      .filter(LocationVisit.trip_id==trip_id)\
+                                      .all()
 
     location_image_url = get_location_image(location_list[0])
 
     # query db for trip items
-    trip_locations = db.session.query(LocationVisit.location_visit_id).join(Trip).filter_by(trip_name=trip_name).all()
+    trip_locations = db.session.query(LocationVisit.location_visit_id)\
+                               .join(Trip).filter_by(trip_name=trip_name)\
+                               .all()
+
     items = db.session.query(Item.description, LocationVisitItem.location_visit_items_id, Location.location_name, Category.category_name)\
-                       .join(LocationVisitItem, LocationVisit, Category, Location)\
-                       .filter(LocationVisit.location_visit_id.in_(trip_locations))\
-                       .all()
+                      .join(LocationVisitItem, LocationVisit, Category, Location)\
+                      .filter(LocationVisit.location_visit_id.in_(trip_locations))\
+                      .all()
+
     core_list = db.session.query(Item.description, Category.category_name)\
-                           .join(CoreListItem, CoreList, Category)\
-                           .filter(CoreList.user_id==user_id).all()
+                          .join(CoreListItem, CoreList, Category)\
+                          .filter(CoreList.user_id==user_id).all()
 
     return render_template('packing_list.html', items=items, trip_name=trip_name, core_list=core_list, 
                                                 location_weather_list=location_weather_list, categories=categories,
@@ -561,9 +542,20 @@ def send_email():
     trip_id = session['trip_id']
     trip_name = db.session.query(Trip.trip_name).filter_by(trip_id=trip_id).one()
 
-    trip_locations = db.session.query(LocationVisit.location_visit_id).join(Trip).filter_by(trip_name=trip_name).all()
-    items = db.session.query(Item.description, LocationVisitItem.location_visit_items_id, Location.location_name, Category.category_name).join(LocationVisitItem, LocationVisit, Category, Location).filter(LocationVisit.location_visit_id.in_(trip_locations)).all()
-    core_list = db.session.query(Item.description, Category.category_name).join(CoreListItem, CoreList, Category).filter(CoreList.user_id==user_id).all()
+    trip_locations = db.session.query(LocationVisit.location_visit_id)\
+                               .join(Trip)\
+                               .filter_by(trip_name=trip_name)\
+                               .all()
+
+    items = db.session.query(Item.description, LocationVisitItem.location_visit_items_id, Location.location_name, Category.category_name)\
+                      .join(LocationVisitItem, LocationVisit, Category, Location)\
+                      .filter(LocationVisit.location_visit_id.in_(trip_locations))\
+                      .all()
+
+    core_list = db.session.query(Item.description, Category.category_name)\
+                          .join(CoreListItem, CoreList, Category)\
+                          .filter(CoreList.user_id==user_id)\
+                          .all()
 
     email_packing_list(user_info[0], recipient_email, user_info[1], trip_name[0], items, core_list)
 
@@ -592,7 +584,7 @@ if __name__ == "__main__":
     connect_to_db(app)
 
     # Use the DebugToolbar
-    # DebugToolbarExtension(app)
+    DebugToolbarExtension(app)
 
     app.run(host="0.0.0.0")
 
