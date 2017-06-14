@@ -3,6 +3,9 @@
 {% block title %}Packbright{% endblock %}
 
 {% block content %}
+
+<link rel="stylesheet" href="/static/css/core_list.css">
+
 <div class="container-fluid">
     <h2>Core Packing List</h2>    
     <h4>These items will be automatically be added to all trip packing lists.</h4>
@@ -10,8 +13,8 @@
     <table id='core-list' class='tablesorter' style='width:50%'>
         <thead>
             <tr>
-                <th>Category</th>
-                <th>Item</th>
+                <th class='cat'>Category</th>
+                <th class='desc'>Description</th>
             </tr>
         </thead>
         <tbody>
@@ -19,74 +22,33 @@
             <tr id='{{ item[2] }}'>
                 <td>{{ item[1] }}</td>
                 <td>{{ item[0] }}</td>
-                <td><div class='remove'>X</div></td>
+                <td><div class='remove'><span class="glyphicon glyphicon-remove" aria-hidden="true">
+                </span></div></td>
             </tr>
             {% endfor %}
         </tbody> 
     </table> 
 
     <form id='new-item' method='POST'>
-        Item Category: 
+        Category: 
         <select id='item-category' name='category'>
             <option value="" disabled selected>Choose One</option>
             {% for category in categories %}
             <option value='{{ category[0] }}'>{{ category[0] }}</option>
             {% endfor %}
         </select>
-        Item Description: <input type='text' id='item-description' name='description'>
-        <input type="Submit" value='Add Item'>
+        <input type='text' class="form-control" id='item-description' name='description' placeholder=' description'>
+        <input type="Submit" id='desc-btn' class="form-control" value='Add Item'>
+
     </form>
 
     <form action='/user_landing/{{ session["user_id"] }}'>
-        <input type='submit' value='Core list finished!'>
+        <input type='submit' class="form-control" value='Core list finished!'>
     </form>
 </div>
 
     <script src='https://code.jquery.com/jquery.js'></script>    
     <script type="text/javascript" src="https://mottie.github.io/tablesorter/dist/js/jquery.tablesorter.min.js"></script>
-
-    <script> 
-
-    $(document).ready(function() { 
-        $("#core-list").tablesorter(); 
-    } 
-    ); 
-
-    function displayItem(result) {
-        console.log(result.core_item_id);
-        $('#core-list tbody').prepend(
-            '<tr id='+result.core_item_id+'>'+
-            '<th>'+result.category+'</th><th>'+result.description+'</th>'+
-            '<th><div class="remove">X</div></th></tr>');
-    }
-
-
-    function addItem(evt) {
-        evt.preventDefault();
-
-        var formInputs = {
-            "category": $('#item-category').val(),
-            "description": $('#item-description').val()
-        };
-
-        $.post("/create_core_list", formInputs, displayItem);
-        $("#item-description").val("");
-
-    }
-
-    $('#new-item').on('submit', addItem);
-
-
-    $(document).on('click','.remove',function(){
-        console.log('hi');
-        var id = $(this).closest('tr').attr("id");        
-        $.get('/remove_core_item', {item_id: id});    
-        $(this).closest("tr").remove();
-        console.log(id);
-
-    });
-
-
-    </script>
+    <script type='text/javascript' src='/static/js/core_list.js'></script>
 
 {% endblock %}

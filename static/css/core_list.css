@@ -1,0 +1,44 @@
+.cat {
+    width: 220px;
+}
+
+.container-fluid {
+    padding-left: 60px;
+}
+
+.desc {
+    width: 160px;
+}
+
+.form-control {
+    width: 140px;
+    height: 28px;
+    margin-top: 5px;
+    display: inline-block;
+    padding: 0;
+}
+
+th {
+    font-size: 18px;
+    padding-bottom: 12px;
+}
+
+td {
+    padding-bottom: 5px;
+    font-size: 16px;
+}
+
+tr:hover .remove {
+    display: inline-block;
+    padding-left: 0;
+}
+
+.remove {
+    display: none;
+    width: 10px;
+
+}
+
+#desc-btn {
+    width: 80px;
+}

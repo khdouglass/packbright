@@ -50,12 +50,13 @@ def register_process():
     first_name = request.form.get('first_name')
     last_name = request.form.get('last_name')
     email = request.form.get('email')
-    
-    # get password and hash it
     password = request.form.get("password").rstrip()
+    
+    # hash password
     password = password.encode('utf8')
     hashed = bcrypt.hashpw(password, bcrypt.gensalt())
 
+    # check db if user already exists
     user_exists = db.session.query(User.user_id).filter_by(user_id=user_id, email=email).first()
 
     if user_exists:
@@ -83,14 +84,12 @@ def login():
     user_id = request.form.get('username')
     password = request.form.get('password')
     
-    # check hased password
+    # check hashed password
     password = password.encode('utf8')
     hashedpass = bcrypt.hashpw(password, bcrypt.gensalt())
     if bcrypt.checkpw(password, hashedpass):
-            
         # set session to user_id
         session['user_id'] = user_id
-
         return redirect('/user_landing/' + user_id)
     else:
         # redirect if password is incorrect    
@@ -118,6 +117,11 @@ def logout():
 @app.route('/user_landing/<user_id>')
 def user_landing(user_id):
     """Display user landing page."""
+
+    # check URL user_id against user_id in session
+    if user_id != session['user_id']:
+        flash('You do not have access to this page!')
+        return redirect('/')
 
     # get user's trips to from db to display
     trips = db.session.query(Location.location_name, Trip.trip_name)\
@@ -154,7 +158,6 @@ def core_list():
                            .order_by(Category.category_name)\
                            .all()
 
-
     return render_template('create_core_list.html', core_list=core_list, categories=categories)
    
 
@@ -167,13 +170,17 @@ def process_core_list():
 
     # get core_list_id from db
     core_list_id = db.session.query(CoreList.core_list_id).filter_by(user_id=user_id).first()
-    core_list_id = core_list_id[0]
 
     if core_list_id is None:
         user_core_list = CoreList(user_id=user_id)
         db.session.add(user_core_list)
         db.session.commit()
         core_list_id = user_core_list.core_list_id
+    else: 
+        core_list_id = core_list_id[0]
+
+    print '***CORELISTID', core_list_id
+
 
     # get user input from form
     item_category = request.form.get('category')
