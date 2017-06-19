@@ -9,7 +9,6 @@ stores all past trip data so lists are easily referenced.
 
 ## Table of Contents
 * [Technologies](#technologies)
-* [Data Modeling](#datamodeling)
 * [Features](#features)
 * [To Do](#todo)
 
@@ -17,10 +16,6 @@ stores all past trip data so lists are easily referenced.
 __Backend:__ Python, Flask, PostgreSQL, SQLAlchemy<br>
 __Frontend:__ Javascript, jQuery, AJAX, Bootstrap, HTML, CSS<br>
 __APIs:__ Google Places, Wunderground, Flickr, SendGrid<br>
-
-## <a name="datamodeling"></a>Data Modeling
-There are 11 tables tracking users, trips, locations, weather and items. The data modeling was particularly interesting,
-as were the SQLAlchemy queries used throughout the list building process and to display complete lists.
 
 ## <a name="features"></a>Features
 To begin using Packbright, users must log in or create an account. Passwords are hashed with bcrypt 
