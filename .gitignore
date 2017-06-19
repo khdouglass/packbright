@@ -5,3 +5,4 @@ secrets.sh
 .coveragesendgrid.env
 sendgrid.env
 __init__.py
+.coverage
