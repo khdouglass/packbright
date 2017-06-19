@@ -3,16 +3,16 @@
 from jinja2 import StrictUndefined
 import urllib2
 import json
-import helper_functions
+import helper.functions
 from random import choice
 from flask import Flask, render_template, request, flash, redirect, session, jsonify
 from flask_debugtoolbar import DebugToolbarExtension
 from model import (connect_to_db, db, User, Trip, Location, Image, LocationVisit, 
                    Weather, WeatherSummary, LocationVisitItem, CoreList, CoreListItem,
                    Item, Category)
-from support_classes import SuggestedList
-from flickr import get_location_image
-from sendgrid_send_email import email_packing_list
+from helper.support_classes import SuggestedList
+from helper.flickr import get_location_image
+from helper.sendgrid_send_email import email_packing_list
 import bcrypt
 
 app = Flask(__name__)
@@ -28,7 +28,6 @@ app.jinja_env.undefined = StrictUndefined
 @app.route('/')
 def index():
     """Homepage."""
-
 
     return render_template('homepage.html')
 
@@ -143,7 +142,7 @@ def user_landing(user_id):
 
 @app.route('/core_list')
 def core_list():
-    """Create user core packling list."""
+    """Create user core packing list."""
 
     # get user_id from session
     user_id = session['user_id'] 
@@ -179,18 +178,16 @@ def process_core_list():
     else: 
         core_list_id = core_list_id[0]
 
-    print '***CORELISTID', core_list_id
-
 
     # get user input from form
     item_category = request.form.get('category')
     item_description = request.form.get('description')
 
     # create new item in db
-    new_item = helper_functions.get_new_item(item_category, item_description)
+    new_item = helper.functions.get_new_item(item_category, item_description)
 
     # create new core item in db
-    new_core_item = helper_functions.get_core_item(core_list_id, new_item.item_id)
+    new_core_item = helper.functions.get_core_item(core_list_id, new_item.item_id)
 
     # get core list id for core list item
     core_item_id = new_core_item.core_list_item_id
@@ -235,10 +232,10 @@ def new_trip():
     location = request.form.get('location')
     
     # add trip to database if not already in db, return object
-    new_trip = helper_functions.get_trip_name()
+    new_trip = helper.functions.get_trip_name()
    
     # add location to database if not already in db, return object
-    new_location = helper_functions.get_location(location)
+    new_location = helper.functions.get_location(location)
 
     # format location to get weather information from wunderground api
     location = location.split(',')
@@ -276,7 +273,7 @@ def new_trip():
 
     # add weather details to DB
     if weather_list:
-        new_weather = helper_functions.get_weather(weather_list, weather_high_avg, weather_low_avg)
+        new_weather = helper.functions.get_weather(weather_list, weather_high_avg, weather_low_avg)
         new_visit = LocationVisit(trip_id=new_trip.trip_id, weather_id=new_weather.weather_id, location_id=new_location.location_id, private=True)
     else:
         new_weather = None
@@ -345,22 +342,16 @@ def create_outfits():
     suggested_items.extend(misc_items)
 
     for item in suggested_items:
-        print item
         if item:
-            new_item = helper_functions.get_new_item(item[0], item[1])
+            new_item = helper.functions.get_new_item(item[0], item[1])
             new_location_visit_item = LocationVisitItem(location_visit_id=location_visit_id, item_id=new_item.item_id)
             db.session.add(new_location_visit_item)
-            print "ADDED"
     db.session.commit()
 
     # get categories from DB
     categories = db.session.query(Category.category_name).order_by(Category.category_name).all()
 
     location_image_url = get_location_image(location[0])
-
-    # get current list of trip items
-    # trip_locations = db.session.query(LocationVisit.location_visit_id).join(Trip).filter_by(trip_name=trip_name).all()
-    # items = db.session.query(Item.description, LocationVisitItem.location_visit_items_id, Location.location_name, Category.category_name).join(LocationVisitItem, LocationVisit, Category, Location).filter(LocationVisit.location_visit_id.in_(trip_locations)).all()
 
     return render_template('create_outfits.html', location=location, location_image_url=location_image_url,
                                                num_formal=num_formal, num_casual=num_casual,
@@ -385,7 +376,6 @@ def add_outfit():
               (shoes_category, shoes_description)]
 
     for item in outfits:
-        print '***ITEM', item
         # query db for id associated with item_category
         category_id = db.session.query(Category.category_id).filter_by(category_name=item[0]).one()
 
@@ -394,7 +384,7 @@ def add_outfit():
 
         # create new item if not in db
         if new_item is None:
-            new_item = helper_functions.get_new_item(item[0], item[1])
+            new_item = helper.functions.get_new_item(item[0], item[1])
 
         # if this is an additional item added to a completed trip list
         if item_location:
@@ -433,7 +423,7 @@ def add_item():
 
     # create new item if not in db
     if new_item is None:
-        new_item = helper_functions.get_new_item(item_category, item_description)
+        new_item = helper.functions.get_new_item(item_category, item_description)
 
     # if this is an additional item added to a completed trip list
     if item_location:
@@ -490,7 +480,6 @@ def remove_item():
 
     return "Item deleted"
 
-# 
 @app.route('/packing_list/<trip_name>')
 def complete_list(trip_name):
     """Display complete packing list for trip."""
@@ -528,7 +517,8 @@ def complete_list(trip_name):
 
     core_list = db.session.query(Item.description, Category.category_name)\
                           .join(CoreListItem, CoreList, Category)\
-                          .filter(CoreList.user_id==user_id).all()
+                          .filter(CoreList.user_id==user_id)\
+                          .all()
 
     return render_template('packing_list.html', items=items, trip_name=trip_name, core_list=core_list, 
                                                 location_weather_list=location_weather_list, categories=categories,
@@ -583,7 +573,8 @@ def reset_trip():
     return redirect('user_landing/' + user_id)
 
 
-if __name__ == "__main__":
+if __name__ == "__main__" and __package__ is None:
+    from os import sys, path
     # We have to set debug=True here, since it has to be True at the point
     # that we invoke the DebugToolbarExtension
     app.debug = True

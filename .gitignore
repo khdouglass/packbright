@@ -4,3 +4,4 @@ secrets.sh
 .DS_Store
 .coveragesendgrid.env
 sendgrid.env
+__init__.py
