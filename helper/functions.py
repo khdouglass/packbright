@@ -22,7 +22,7 @@ def get_new_item(item_category, item_description):
 
     return new_item
 
-#create new core_list_items instance
+
 def get_core_item(core_list_id, item_id):
     """Create new core list item in db."""
 
@@ -31,6 +31,7 @@ def get_core_item(core_list_id, item_id):
     db.session.commit()
 
     return new_core_item
+    
 
 def get_trip_name():
     """Create new trip in db, if one does not already exist."""

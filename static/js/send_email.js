@@ -1,4 +1,5 @@
 "use strict";
+console.log("HERE")
 
 function sendEmail(evt) {
     evt.preventDefault();
@@ -6,11 +7,11 @@ function sendEmail(evt) {
     var formInputs = {
         "email": $('#email').val(),
     };
+    console.log(formInputs)
 
     $.post("/send_email", formInputs);
     $("#email").val("");
     $("#email-sent").css("display", "inline-block");
-    // $('#email-btn').prop("disabled",true);
 };
 
 $('#send_email').on('submit', sendEmail);

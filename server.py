@@ -1,4 +1,4 @@
-"""Packing Lists."""
+"""Packbright."""
 
 from jinja2 import StrictUndefined
 import urllib2
@@ -16,12 +16,7 @@ from helper.sendgrid_send_email import email_packing_list
 import bcrypt
 
 app = Flask(__name__)
-
-# Required to use Flask sessions and the debug toolbar
 app.secret_key = "ABC"
-
-# Normally, if you use an undefined variable in Jinja2, it fails silently.
-# This is horrible. Fix this so that, instead, it raises an error.
 app.jinja_env.undefined = StrictUndefined
 
 
@@ -178,7 +173,6 @@ def process_core_list():
     else: 
         core_list_id = core_list_id[0]
 
-
     # get user input from form
     item_category = request.form.get('category')
     item_description = request.form.get('description')
@@ -197,6 +191,7 @@ def process_core_list():
                                   .join(Category, CoreListItem)\
                                   .filter_by(core_list_item_id=core_item_id)\
                                   .one()
+                                  
     core_item_dict = {}
 
     # add item info to dictionary
@@ -332,12 +327,11 @@ def create_outfits():
     
     # call suggested list methods
     passport = new_list.need_passport()
-    sunglasses = new_list.need_sunglasses()
-    jacket = new_list.need_jacket() 
-    umbrella = new_list.need_umbrella()
-    activities_items_list = list(set(new_list.activities()))
+    weather_items = new_list.get_weather_items()
+    activities_items_list = list(set(new_list.get_activity_items()))
     misc_items = new_list.misc_items()
-    suggested_items = [passport, sunglasses, jacket, umbrella]
+    suggested_items = [passport]
+    suggested_items.extend(weather_items)
     suggested_items.extend(activities_items_list)
     suggested_items.extend(misc_items)
 
@@ -405,6 +399,7 @@ def add_outfit():
     db.session.commit()
 
     return "Outfit Added"
+
 
 @app.route("/add_item", methods=['POST'])
 def add_item():
@@ -480,6 +475,7 @@ def remove_item():
 
     return "Item deleted"
 
+
 @app.route('/packing_list/<trip_name>')
 def complete_list(trip_name):
     """Display complete packing list for trip."""
@@ -524,6 +520,7 @@ def complete_list(trip_name):
                                                 location_weather_list=location_weather_list, categories=categories,
                                                 location_list=location_list, location_image_url=location_image_url)
 
+
 @app.route('/send_email', methods=['POST'])
 def send_email():
     """Send packing list in an email."""
@@ -554,10 +551,9 @@ def send_email():
                           .filter(CoreList.user_id==user_id)\
                           .all()
 
+    print "EMAIL INFO", user_info[0], recipient_email, user_info[1], trip_name[0], items, core_list
     email_packing_list(user_info[0], recipient_email, user_info[1], trip_name[0], items, core_list)
 
-
-    flash('Email sent!')
     return 'email sent'
 
 
