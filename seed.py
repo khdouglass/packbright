@@ -3,7 +3,7 @@
 import datetime
 from sqlalchemy import func
 
-from model import User, Trip, Location, Image, LocationVisit, Weather, WeatherSummary, LocationVisitItem, CoreList, CoreListItem, Category, Item, connect_to_db, db
+from model import User, Trip, Location, LocationVisit, Weather, WeatherSummary, LocationVisitItem, CoreList, CoreListItem, Category, Item, connect_to_db, db
 from server import app
 
 
@@ -43,25 +43,10 @@ def load_locations():
 
     db.session.commit()
 
-def load_images():
-    """Load location images into database."""
-
-    images = [(1, 1, "http://www.arikhanson.com/wp-content/uploads/2012/06/PublicMarket.jpg"),
-              (2, 1, "http://68.media.tumblr.com/tumblr_m7bd4f8GAt1r1thfzo5_1280.jpg)")]
-              # (3, 7, "http://www.butterflydiary.com/wp-content/uploads/2013/08/LakeTahoe7.jpg"),
-              # (4, 10, "http://68.media.tumblr.com/b715cf8b93a38305b866be7b2e618a87/tumblr_mwoj9h51Ws1r1thfzo4_1280.jpg"),
-              # (5, 9, "http://68.media.tumblr.com/13494ab052d7666b0b5e94259e29f313/tumblr_o11ta45neq1r1thfzo2_1280.jpg")]
-
-    for image in images:
-        new_image = Image(location_id=image[0], month=image[1], image_url=image[2])
-        db.session.add(new_image)
-
-    db.session.commit() 
-
-
 def load_location_visits():
     """Load location visits into database."""
 
+    # add location visits with reference to the trip id, weather id, location id, and privacy setting
     visits = [(1, 1, 1, False), (2, 2, 2, True)]
 
     for visit in visits:
@@ -108,6 +93,7 @@ def load_weather_summary():
 def load_location_visit_items():
     """Load location visit items into database."""
 
+    # add sample location items referencing the location visit id and item id
     items = [(1, 1), (1, 2), (1, 3), (1, 6), (1, 16), (1, 17), (1, 20),
              (2, 7), (2, 12), (2, 18), (2, 19), (2, 4), (2, 14), (2, 15)]
 
@@ -129,6 +115,7 @@ def load_core_list():
 def load_core_list_items():
     """Load core list items into database."""
 
+    # add core packing items with reference to the core list id and item id
     items = [(1, 21), (1, 22), (1, 23), (1, 24), (1, 25), (1, 26)]
 
     for item in items:
