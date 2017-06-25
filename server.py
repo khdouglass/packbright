@@ -1,19 +1,21 @@
 """Packbright."""
 
-from jinja2 import StrictUndefined
-import urllib2
 import json
-import helper.functions
 from random import choice
+import urllib2
+
+import bcrypt
 from flask import Flask, render_template, request, flash, redirect, session, jsonify
 from flask_debugtoolbar import DebugToolbarExtension
+from jinja2 import StrictUndefined
+from helper.flickr import get_location_image
+from helper.sendgrid_send_email import email_packing_list
+
+import helper.functions
 from model import (connect_to_db, db, User, Trip, Location, Image, LocationVisit, 
                    Weather, WeatherSummary, LocationVisitItem, CoreList, CoreListItem,
                    Item, Category)
 from helper.support_classes import SuggestedList
-from helper.flickr import get_location_image
-from helper.sendgrid_send_email import email_packing_list
-import bcrypt
 
 app = Flask(__name__)
 app.secret_key = "ABC"
@@ -573,7 +575,7 @@ if __name__ == "__main__" and __package__ is None:
     from os import sys, path
     # We have to set debug=True here, since it has to be True at the point
     # that we invoke the DebugToolbarExtension
-    app.debug = True
+    # app.debug = True
 
     connect_to_db(app)
 
