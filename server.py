@@ -25,14 +25,12 @@ app.jinja_env.undefined = StrictUndefined
 @app.route('/')
 def index():
     """Homepage."""
-
     return render_template('homepage.html')
 
 
 @app.route('/register')
 def register_form():
     """Show form for user signup."""
-
 
     return render_template('register.html')
 
@@ -218,7 +216,7 @@ def remove_core_item():
     db.session.delete(item)
     db.session.commit()
 
-    return "Item deleted"
+    return
 
 
 @app.route('/new_trip', methods=['POST'])
