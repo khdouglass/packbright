@@ -2,9 +2,7 @@
 
 console.log("HERE")
 
-/*
-hgggghghhg
-*/
+// add outfit to db on submit
 function addOutfit(evt) {
     evt.preventDefault();
     console.log('SUBMIT');
@@ -30,6 +28,7 @@ function addOutfit(evt) {
 $('.new-outfit').on('submit', addOutfit);
 
 
+// display item after it's added
 function displayItem(result) {
     console.log(result.location_visit_items_id);
     $('#packing-list tbody').append(
@@ -37,6 +36,7 @@ function displayItem(result) {
         +result.description+'</td><td>'+result.location+'</td><td><div class="remove"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></div></td></tr>');
 }
 
+// add individual item to db
 function addItem(evt) {
     evt.preventDefault();
 
@@ -52,18 +52,43 @@ function addItem(evt) {
 
 $('#new-item').on('submit', addItem);
 
-function addSuggItem(evt) {
-    evt.preventDefault();
-    var row = $(this).closest("tr");
-    var formInputs = {
-        "category": row.children('td.sugg-item-category')[0].innerHTML,
-        "description": row.find('.sugg-item-description')[0].value,
-    };
 
-    $.post("/create_list", formInputs, displayItem);
-}
+// remove item when displayed in a table
+$(document).on('click','.remove',function(){
+    var id = $(this).closest('tr').attr("id");        
+    $.get('/remove_item', {item_id: id});    
+    $(this).closest("tr").remove();
+    console.log(id);
+    });
 
-$('.add').on('click', addSuggItem);
+
+// remove item field
+$(document).on('click','.remove',function(){
+    $(this.parentElement).remove();
+    });
+
+
+// tablesorter functionality
+$(document).ready(function() { 
+    $('#packing-list').tablesorter({ 
+    }); 
+});
+
+
+// functionality for adding suggested items - not currently needed
+
+// function addSuggItem(evt) {
+//     evt.preventDefault();
+//     var row = $(this).closest("tr");
+//     var formInputs = {
+//         "category": row.children('td.sugg-item-category')[0].innerHTML,
+//         "description": row.find('.sugg-item-description')[0].value,
+//     };
+
+//     $.post("/create_list", formInputs, displayItem);
+// }
+
+// $('.add').on('click', addSuggItem);
 
 // $(document).on('click','.add',function(){
 //     var id = $(this).closest('tr').attr("id");        
@@ -72,27 +97,9 @@ $('.add').on('click', addSuggItem);
 //     console.log(id);
 //     });
 
-
-$(document).on('click','.remove',function(){
-    var id = $(this).closest('tr').attr("id");        
-    $.get('/remove_item', {item_id: id});    
-    $(this).closest("tr").remove();
-    console.log(id);
-    });
-
-$(document).on('click','.remove',function(){
-    // debugger;       
-    $(this.parentElement).remove();
-    });
-
-
-$(document).ready(function() { 
-    $('#packing-list').tablesorter({ 
-    }); 
-});
-
-$(document).ready(function() { 
-    $('#suggested-items').tablesorter({ 
-        sortList: [[0,0]]
-    }); 
-});
+// tablesorter functionality for suggested items - not currently needed
+// $(document).ready(function() { 
+//     $('#suggested-items').tablesorter({ 
+//         sortList: [[0,0]]
+//     }); 
+// });

@@ -2,11 +2,13 @@
 
 console.log("HERE")
 
+// tablesorter functionality 
 $(document).ready(function() { 
     $("#core-list").tablesorter(); 
 } 
 ); 
 
+// display items as they're manually added
 function displayItem(result) {
     console.log(result.core_item_id);
     $('#core-list tbody').prepend(
@@ -16,6 +18,7 @@ function displayItem(result) {
             </span></div></td>');
 }
 
+// add indivudial items to db as they're manually added
 function addItem(evt) {
     evt.preventDefault();
 
@@ -31,7 +34,7 @@ function addItem(evt) {
 
 $('#new-item').on('submit', addItem);
 
-
+// remove items manually
 $(document).on('click','.remove',function(){
     console.log('hi');
     var id = $(this).closest('tr').attr("id");        
