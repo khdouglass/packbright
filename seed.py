@@ -7,66 +7,66 @@ from model import User, Trip, Location, LocationVisit, Weather, WeatherSummary, 
 from server import app
 
 
-def load_users():
-    """Load users from into database."""
+# def load_users():
+#     """Load users from into database."""
 
-    print "Users"
+#     print "Users"
 
-    user = User(user_id='khdouglass', first_name='Kathryn', last_name='Douglass', email='email@gmail.com', password='1234')
+#     user = User(user_id='khdouglass', first_name='Kathryn', last_name='Douglass', email='email@gmail.com', password='1234')
 
-    db.session.add(user)
-    db.session.commit()
-
-
-def load_trips():
-    """Load trips into database"""
-
-    print "Trips"
-
-    trips = [('khdouglass', 'California vacation'), ('khdouglass', 'Winter trip to NYC')]
-
-    for trip in trips:
-        new_trip = Trip(user_id=trip[0], trip_name=trip[1])
-        db.session.add(new_trip)
-
-    db.session.commit()
+#     db.session.add(user)
+#     db.session.commit()
 
 
-def load_locations():
-    """Load locations into database."""
+# def load_trips():
+#     """Load trips into database"""
 
-    locations = ['Palm Springs, CA, United States', 'New York, NY, United States']
+#     print "Trips"
 
-    for location in locations:
-        new_location = Location(location_name=location)
-        db.session.add(new_location)    
+#     trips = [('khdouglass', 'California vacation'), ('khdouglass', 'Winter trip to NYC')]
 
-    db.session.commit()
+#     for trip in trips:
+#         new_trip = Trip(user_id=trip[0], trip_name=trip[1])
+#         db.session.add(new_trip)
 
-def load_location_visits():
-    """Load location visits into database."""
-
-    # add location visits with reference to the trip id, weather id, location id, and privacy setting
-    visits = [(1, 1, 1, False), (2, 2, 2, True)]
-
-    for visit in visits:
-        new_visit = LocationVisit(trip_id=visit[0], weather_id=visit[1], location_id=visit[2], private=visit[3])
-        db.session.add(new_visit)
-
-    db.session.commit()
+#     db.session.commit()
 
 
-def load_weather():
-    """Load weather data into database."""
+# def load_locations():
+#     """Load locations into database."""
 
-    weather = [('Clear', 72, 58), ('Chance Flurries', 40, 32), ('Rain', 55, 43)]
+#     locations = ['Palm Springs, CA, United States', 'New York, NY, United States']
 
-    for item in weather:
-        new_weather = Weather(weather_summary_id=item[0], temperature_high=item[1], 
-                              temperature_low=item[2])
-        db.session.add(new_weather)
+#     for location in locations:
+#         new_location = Location(location_name=location)
+#         db.session.add(new_location)    
 
-    db.session.commit()
+#     db.session.commit()
+
+# def load_location_visits():
+#     """Load location visits into database."""
+
+#     # add location visits with reference to the trip id, weather id, location id, and privacy setting
+#     visits = [(1, 1, 1, False), (2, 2, 2, True)]
+
+#     for visit in visits:
+#         new_visit = LocationVisit(trip_id=visit[0], weather_id=visit[1], location_id=visit[2], private=visit[3])
+#         db.session.add(new_visit)
+
+#     db.session.commit()
+
+
+# def load_weather():
+#     """Load weather data into database."""
+
+#     weather = [('Clear', 72, 58), ('Chance Flurries', 40, 32), ('Rain', 55, 43)]
+
+#     for item in weather:
+#         new_weather = Weather(weather_summary_id=item[0], temperature_high=item[1], 
+#                               temperature_low=item[2])
+#         db.session.add(new_weather)
+
+#     db.session.commit()
 
 
 def load_weather_summary():
@@ -90,39 +90,39 @@ def load_weather_summary():
 
     db.session.commit()
 
-def load_location_visit_items():
-    """Load location visit items into database."""
+# def load_location_visit_items():
+#     """Load location visit items into database."""
 
-    # add sample location items referencing the location visit id and item id
-    items = [(1, 1), (1, 2), (1, 3), (1, 6), (1, 16), (1, 17), (1, 20),
-             (2, 7), (2, 12), (2, 18), (2, 19), (2, 4), (2, 14), (2, 15)]
+#     # add sample location items referencing the location visit id and item id
+#     items = [(1, 1), (1, 2), (1, 3), (1, 6), (1, 16), (1, 17), (1, 20),
+#              (2, 7), (2, 12), (2, 18), (2, 19), (2, 4), (2, 14), (2, 15)]
 
-    for item in items:
-        new_item = LocationVisitItem(location_visit_id=item[0], item_id=item[1])
-        db.session.add(new_item)
+#     for item in items:
+#         new_item = LocationVisitItem(location_visit_id=item[0], item_id=item[1])
+#         db.session.add(new_item)
 
-    db.session.commit()    
-
-
-def load_core_list():
-    """Load core list into database."""
-
-    new_core_list = CoreList(user_id='khdouglass')
-    db.session.add(new_core_list)
-    db.session.commit()
+#     db.session.commit()    
 
 
-def load_core_list_items():
-    """Load core list items into database."""
+# def load_core_list():
+#     """Load core list into database."""
 
-    # add core packing items with reference to the core list id and item id
-    items = [(1, 21), (1, 22), (1, 23), (1, 24), (1, 25), (1, 26)]
+#     new_core_list = CoreList(user_id='khdouglass')
+#     db.session.add(new_core_list)
+#     db.session.commit()
 
-    for item in items:
-        new_item = CoreListItem(core_list_id=item[0], item_id=item[1])
-        db.session.add(new_item)
 
-    db.session.commit()
+# def load_core_list_items():
+#     """Load core list items into database."""
+
+#     # add core packing items with reference to the core list id and item id
+#     items = [(1, 21), (1, 22), (1, 23), (1, 24), (1, 25), (1, 26)]
+
+#     for item in items:
+#         new_item = CoreListItem(core_list_id=item[0], item_id=item[1])
+#         db.session.add(new_item)
+
+#     db.session.commit()
 
 
 def load_categories():
@@ -142,23 +142,23 @@ def load_categories():
     db.session.commit()
 
 
-def load_items():
-    """Load items into database."""
+# def load_items():
+#     """Load items into database."""
 
-    items = [(8, 'Black sweater from J.Crew'), (1, 'Light denim flares'), 
-             (9, 'Tan turtleneck'), (2, 'Cutoff Levis'), (1, 'Dark skinny jeans'),
-             (2, 'Black leggings'), (3, 'Denim shorts'), (3, 'Running shorts'), 
-             (4, 'Floral skirt'), (5, 'White ruffle dress'), (5, 'Yellow sundress'),
-             (6, 'White ribbed tank'), (7, 'White collared shirt'), (7, 'Black silk blouse'), 
-             (10, 'Leather jacket'), (10, 'Trench'), (11, 'Tennis shoes'), (11, 'Sandals'),
-             (16, 'Gold bracelet'), (19, 'Headband'), (20, 'Blow dryer'), (21, 'Mascara'), 
-             (21, 'Red lipstick'), (22, 'Tootbrush'), (22, 'Toothpaste'), (22, 'Deodorant')]
+#     items = [(8, 'Black sweater from J.Crew'), (1, 'Light denim flares'), 
+#              (9, 'Tan turtleneck'), (2, 'Cutoff Levis'), (1, 'Dark skinny jeans'),
+#              (2, 'Black leggings'), (3, 'Denim shorts'), (3, 'Running shorts'), 
+#              (4, 'Floral skirt'), (5, 'White ruffle dress'), (5, 'Yellow sundress'),
+#              (6, 'White ribbed tank'), (7, 'White collared shirt'), (7, 'Black silk blouse'), 
+#              (10, 'Leather jacket'), (10, 'Trench'), (11, 'Tennis shoes'), (11, 'Sandals'),
+#              (16, 'Gold bracelet'), (19, 'Headband'), (20, 'Blow dryer'), (21, 'Mascara'), 
+#              (21, 'Red lipstick'), (22, 'Tootbrush'), (22, 'Toothpaste'), (22, 'Deodorant')]
 
-    for item in items:
-        new_item = Item(category_id=item[0], description=item[1])
-        db.session.add(new_item)
+#     for item in items:
+#         new_item = Item(category_id=item[0], description=item[1])
+#         db.session.add(new_item)
 
-    db.session.commit()
+#     db.session.commit()
 
 
 
