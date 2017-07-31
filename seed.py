@@ -167,18 +167,18 @@ if __name__ == "__main__":
     connect_to_db(app)
     db.create_all()
 
-    load_users()
-    load_trips()
-    load_locations()
+    # load_users()
+    # load_trips()
+    # load_locations()
     load_weather_summary()
-    load_weather()
+    # load_weather()
     load_categories()
-    load_items()
-    load_location_visits()
-    load_location_visit_items()
-    load_core_list()
-    load_core_list_items()
-    load_images()
+    # load_items()
+    # load_location_visits()
+    # load_location_visit_items()
+    # load_core_list()
+    # load_core_list_items()
+    # load_images()
 
     
 
