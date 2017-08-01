@@ -47,8 +47,7 @@ def register_process():
     password = request.form.get("password").rstrip()
     
     # hash password
-    password = password.encode('utf8')
-    hashed = bcrypt.hashpw(password, bcrypt.gensalt())
+    hashed = bcrypt.hashpw(password.encode('utf8'), bcrypt.gensalt())
 
     # check db if user already exists
     user_exists = db.session.query(User.user_id).filter_by(user_id=user_id, email=email).first()
@@ -59,7 +58,7 @@ def register_process():
 
     # create new user, add to db
     new_user = User(user_id=user_id, first_name=first_name, last_name=last_name, 
-                    email=email, password=password)
+                    email=email, password=hashed)
     
     db.session.add(new_user)
     db.session.commit()
@@ -77,18 +76,6 @@ def login():
     # get user input
     user_id = request.form.get('username')
     password = request.form.get('password')
-    
-    # check hashed password
-    password = password.encode('utf8')
-    hashedpass = bcrypt.hashpw(password, bcrypt.gensalt())
-    if bcrypt.checkpw(password, hashedpass):
-        # set session to user_id
-        session['user_id'] = user_id
-        return redirect('/user_landing/' + user_id)
-    else:
-        # redirect if password is incorrect    
-        flash('Password is incorrect!')
-        return redirect('/')
 
     # query db for user_id
     user = db.session.query(User).filter_by(user_id=user_id).first()
@@ -96,6 +83,16 @@ def login():
     # flash message and redirect if is incorrect
     if user is None:
         flash('User does not exist!')
+        return redirect('/')
+    
+    # check hashed password
+    if bcrypt.checkpw(password.encode('utf8'), user.password.encode('utf8')):
+        # set session to user_id
+        session['user_id'] = user_id
+        return redirect('/user_landing/' + user_id)
+    else:
+        # redirect if password is incorrect    
+        flash('Password is incorrect!')
         return redirect('/')
 
 
