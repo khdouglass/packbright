@@ -40,7 +40,7 @@ def register_process():
     """Process registration."""
 
     # get user information from registration form
-    user_id = request.form.get('username')
+    user_id = (request.form.get('username')).lower()
     first_name = request.form.get('first_name')
     last_name = request.form.get('last_name')
     email = request.form.get('email')
@@ -50,10 +50,15 @@ def register_process():
     hashed = bcrypt.hashpw(password.encode('utf8'), bcrypt.gensalt())
 
     # check db if user already exists
-    user_exists = db.session.query(User.user_id).filter_by(user_id=user_id, email=email).first()
+    user_exists = db.session.query(User.user_id).filter_by(user_id=user_id).first()
+    email_exists = db.session.query(User.user_id).filter_by(email=email).first()
 
     if user_exists:
         flash("User already exists!")
+        return redirect('/register')
+
+    if email_exists:
+        flash("Email address already registered!")
         return redirect('/register')
 
     # create new user, add to db
@@ -74,7 +79,7 @@ def login():
     """Process login."""
 
     # get user input
-    user_id = request.form.get('username')
+    user_id = (request.form.get('username')).lower()
     password = request.form.get('password')
 
     # query db for user_id
@@ -484,6 +489,7 @@ def complete_list(trip_name):
                               .join(LocationVisit, Trip)\
                               .filter_by(trip_id=trip_id)\
                               .all()
+    print "**LOCATION LIST", location_list
 
     session['trip_id'] = trip_id
 

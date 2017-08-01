@@ -1,0 +1,13 @@
+.form-control {
+    width: 250px;
+    margin: 0 auto;
+    padding-left: 6px;
+}
+
+.btn {
+    margin: 8px;
+}
+
+h2 {
+    margin-bottom: 20px;
+}

@@ -1,41 +1,44 @@
 {% extends 'base.html' %}
 
-{% block title %}PACK MANAGER{% endblock %}
+{% block title %}Packbright{% endblock %}
 
 {% block content %}
 
-    <h1>THE PACK MANAGER </h1>
+    <link rel="stylesheet" href="/static/css/register.css">
 
-    <h4>Create a Pack Manager account!</h4>
-    <form action='/register' method='POST'>
-        <div>
-            <label>Username:
-                <input type='text' name='username' required>
-            </label>
-        </div>
-        <div>
-            <label>First Name:
-                <input type='text' name='first_name' required>
-            </label>
-        </div>
-        <div>
-            <label>Last Name:
-                <input type='text' name='last_name' required>
-            </label>
-        </div>
-        <div>
-            <label>Email:
-                <input type='email' name='email' required>
-            </label>
-        </div>
-        <div>
-            <label>Password:
-                <input type='password' name='password' required>
-            </label>
-        </div>
-        <div>
-            <input type='submit' value='Register'>
-        </div>
-    </form>
+    <div class="container-fluid text-center">
+        <h2>Create a Packbright account!</h2>
+
+        <form action='/register' method='POST'>
+            <div>
+                <label>
+                    <input type='text' class="form-control" name='username' placeholder='Username' required>
+                </label>
+            </div>
+            <div>
+                <label>
+                    <input type='text' class="form-control" name='first_name' placeholder='First Name' required>
+                </label>
+            </div>
+            <div>
+                <label>
+                    <input type='text' class="form-control" name='last_name' placeholder='Last Name' required>
+                </label>
+            </div>
+            <div>
+                <label>
+                    <input type='email' class="form-control" name='email' placeholder='Email' required>
+                </label>
+            </div>
+            <div>
+                <label>
+                    <input type='password' class="form-control" name='password' placeholder='Password' required>
+                </label>
+            </div>
+            <div>
+                <input type='submit' class="btn btn-default" value='Register'>
+            </div>
+        </form>
+    </div>
 
 {% endblock %}
