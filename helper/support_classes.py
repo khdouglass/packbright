@@ -16,7 +16,7 @@ class SuggestedList(object):
 
         if 'Party' in self.activities_list:
             items.extend([('Vitamins / Medications', 'Advil'), ('Tolietries', 'Face Mask'),
-                          ('Hair Products / Tools', ''), ('Make Up', '')])
+                          ('Hair Products / Tools', '')])
 
         if 'Tourism' in self.activities_list:
             items.extend([('Shoes', 'Walking Shoes'), ('Technology', 'Camera'), ('Accessories', 'Travel Bag')])
@@ -42,7 +42,7 @@ class SuggestedList(object):
                           ('Outdoor Equipment', 'Cooking Supplies')])
 
         if 'Wedding / Special Event' in self.activities_list:
-            items.extend([('Shoes', 'Formal Shoes'), ('Hair Products / Tools', ''), ('Make Up', '')])
+            items.extend([('Shoes', 'Formal Shoes'), ('Hair Products / Tools', '')])
 
         if 'Swimming' in self.activities_list:
             items.extend([('Swimsuit', 'Swimsuit'), ('Skin Care', 'Sunscreen'), ('Shoes', 'Sandals')])
