@@ -19,7 +19,7 @@ idna==2.5
 itsdangerous==0.24
 jasmine==2.6.0
 jasmine-core==2.6.2
-Jinja2==2.9.6
+Jinja2==2.11.3
 MarkupSafe==1.0
 mccabe==0.6.1
 oauthlib==2.0.2
